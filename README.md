@@ -1,2 +1,2 @@
 # appmovile
-Primera App Movil para 
+Primera App Movil con nodejs angular como proyecto universitario
