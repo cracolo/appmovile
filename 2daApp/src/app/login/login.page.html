@@ -1,0 +1,102 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="login-wrapper">
+    <!-- Logo / título -->
+    <div class="login-header">
+      <ion-icon name="lock-closed-outline" class="login-icon"></ion-icon>
+      <h2>Bienvenido</h2>
+      <p>Ingresa tus credenciales para continuar</p>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Usuario -->
+      <ion-item fill="outline" class="ion-margin-bottom">
+        <ion-label position="floating">Usuario</ion-label>
+        <ion-input
+          type="text"
+          formControlName="username"
+          autocomplete="username"
+          placeholder="Tu usuario">
+        </ion-input>
+        <ion-icon slot="start" name="person-outline"></ion-icon>
+      </ion-item>
+
+      <!-- Mensaje de error usuario -->
+      @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
+        <ion-text color="danger" class="ion-padding-start">
+          <small>El usuario es requerido (mín. 3 caracteres)</small>
+        </ion-text>
+      }
+
+      <!-- Contraseña -->
+      <ion-item fill="outline" class="ion-margin-bottom">
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input
+          [type]="showPassword ? 'text' : 'password'"
+          formControlName="password"
+          autocomplete="current-password"
+          placeholder="Tu contraseña">
+        </ion-input>
+        <ion-icon slot="start" name="key-outline"></ion-icon>
+        <ion-button
+          slot="end"
+          fill="clear"
+          color="medium"
+          type="button"
+          (click)="togglePassword()">
+          <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <!-- Mensaje de error contraseña -->
+      @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+        <ion-text color="danger" class="ion-padding-start">
+          <small>La contraseña es requerida (mín. 6 caracteres)</small>
+        </ion-text>
+      }
+
+      <!-- Recordar / olvidé contraseña -->
+      <div class="login-options">
+        <ion-checkbox formControlName="remember" labelPlacement="end">
+          Recordarme
+        </ion-checkbox>
+        <ion-button fill="clear" size="small" type="button" (click)="onForgotPassword()">
+          ¿Olvidaste tu contraseña?
+        </ion-button>
+      </div>
+
+      <!-- Botón login -->
+      <ion-button
+        expand="block"
+        type="submit"
+        class="ion-margin-top"
+        [disabled]="loginForm.invalid || isLoading">
+        <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+        <span *ngIf="!isLoading">Iniciar sesión</span>
+      </ion-button>
+
+      <!-- Mensaje de error global -->
+      @if (errorMessage) {
+        <ion-text color="danger">
+          <p class="ion-text-center ion-margin-top">{{ errorMessage }}</p>
+        </ion-text>
+      }
+    </form>
+
+    <!-- Registro -->
+    <div class="login-footer">
+      <ion-text color="medium">
+        <small>¿No tienes cuenta?</small>
+      </ion-text>
+      <ion-button fill="clear" size="small" (click)="goToRegister()">
+        Regístrate
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

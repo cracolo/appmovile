@@ -1,0 +1,47 @@
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 24px 8px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
+
+  .login-icon {
+    font-size: 64px;
+    color: var(--ion-color-primary);
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-weight: 700;
+    margin: 8px 0;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+}
+
+.login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
