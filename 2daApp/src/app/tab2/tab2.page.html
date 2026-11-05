@@ -4,32 +4,15 @@
       AURA, Sistema de alerta ante caidas
     </ion-title>
 
-    <!-- Botón de engranaje arriba a la derecha -->
+    <!-- Botón de cerrar sesión visible arriba a la derecha -->
     <ion-buttons slot="end">
-      <ion-button id="gear-menu-trigger" aria-label="Menú de opciones">
-        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
+      <ion-button color="danger" fill="solid" size="small" (click)="cerrarSesion()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Cerrar sesión
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
-<!-- Menú desplegable del engranaje -->
-<ion-popover trigger="gear-menu-trigger" triggerAction="click" [dismissOnSelect]="true">
-  <ng-template>
-    <ion-content>
-      <ion-list lines="full">
-        <ion-item button="true" detail="false" (click)="abrirConfiguracion()">
-          <ion-icon slot="start" name="options-outline"></ion-icon>
-          <ion-label>Configuración</ion-label>
-        </ion-item>
-        <ion-item button="true" detail="false" (click)="cerrarSesion()">
-          <ion-icon slot="start" name="log-out-outline" color="danger"></ion-icon>
-          <ion-label color="danger">Cerrar sesión</ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-content>
-  </ng-template>
-</ion-popover>
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="aura-container">
@@ -62,6 +45,11 @@
 
     <!-- Botón hacia la pestaña Sobre Aura -->
     <div class="buttons-wrapper">
+      <ion-button
+        expand="block"
+        size="large"
+        color="primary"
+        class="action-btn"
         (click)="irASobreAura()">
         <ion-icon slot="start" name="information-circle-outline"></ion-icon>
         Sobre Aura

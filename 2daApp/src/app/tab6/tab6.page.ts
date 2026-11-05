@@ -26,7 +26,9 @@ import {
   notificationsOutline,
   shieldCheckmarkOutline,
   flashOutline,
+  logOutOutline,
 } from 'ionicons/icons';
+import { AuthService } from '../services/auth';
 
 @Component({
   selector: 'app-tab6',
@@ -53,7 +55,10 @@ import {
   ],
 })
 export class Tab6Page {
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {
     addIcons({
       arrowBackOutline,
       informationCircleOutline,
@@ -61,11 +66,17 @@ export class Tab6Page {
       notificationsOutline,
       shieldCheckmarkOutline,
       flashOutline,
+      logOutOutline,
     });
   }
 
   volverPanel() {
     this.router.navigateByUrl('/tabs/tab2');
+  }
+
+  async cerrarSesion() {
+    await this.authService.logout();
+    await this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
   }
 }
 

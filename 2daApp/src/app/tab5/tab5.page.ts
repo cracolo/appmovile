@@ -23,7 +23,9 @@ import {
   medkitOutline,
   peopleOutline,
   alertCircleOutline,
+  logOutOutline,
 } from 'ionicons/icons';
+import { AuthService } from '../services/auth';
 
 @Component({
   selector: 'app-tab5',
@@ -49,7 +51,8 @@ import {
 export class Tab5Page {
   constructor(
     private router: Router,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private authService: AuthService
   ) {
     addIcons({
       arrowBackOutline,
@@ -57,6 +60,7 @@ export class Tab5Page {
       medkitOutline,
       peopleOutline,
       alertCircleOutline,
+      logOutOutline,
     });
   }
 
@@ -84,5 +88,10 @@ export class Tab5Page {
 
   volverPanel() {
     this.router.navigateByUrl('/tabs/tab2');
+  }
+
+  async cerrarSesion() {
+    await this.authService.logout();
+    await this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
   }
 }

@@ -26,7 +26,9 @@ import {
   walkOutline,
   checkmarkCircleOutline,
   ellipseOutline,
+  logOutOutline,
 } from 'ionicons/icons';
+import { AuthService } from '../services/auth';
 
 @Component({
   selector: 'app-tab4',
@@ -57,13 +59,17 @@ export class Tab4Page {
   estadoSensorPresencia: 'activo' | 'pasivo' = 'activo';
   estadoRadar: 'activo' | 'pasivo' = 'activo';
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {
     addIcons({
       arrowBackOutline,
       radioOutline,
       walkOutline,
       checkmarkCircleOutline,
       ellipseOutline,
+      logOutOutline,
     });
   }
 
@@ -77,5 +83,10 @@ export class Tab4Page {
 
   volverPanel() {
     this.router.navigateByUrl('/tabs/tab2');
+  }
+
+  async cerrarSesion() {
+    await this.authService.logout();
+    await this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
   }
 }

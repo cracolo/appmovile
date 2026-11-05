@@ -9,21 +9,14 @@ import {
   IonButton,
   IonIcon,
   IonContent,
-  IonPopover,
-  IonList,
-  IonItem,
-  IonLabel,
   IonCard,
   IonCardHeader,
   IonCardTitle,
   IonCardContent,
-  ToastController,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
-  settingsOutline,
   logOutOutline,
-  optionsOutline,
   informationCircleOutline,
 } from 'ionicons/icons';
 import { AuthService } from '../services/auth';
@@ -42,10 +35,6 @@ import { AuthService } from '../services/auth';
     IonButton,
     IonIcon,
     IonContent,
-    IonPopover,
-    IonList,
-    IonItem,
-    IonLabel,
     IonCard,
     IonCardHeader,
     IonCardTitle,
@@ -55,37 +44,20 @@ import { AuthService } from '../services/auth';
 export class Tab2Page {
   constructor(
     private authService: AuthService,
-    private router: Router,
-    private toastController: ToastController
+    private router: Router
   ) {
     addIcons({
-      settingsOutline,
       logOutOutline,
-      optionsOutline,
       informationCircleOutline,
     });
   }
 
-  async mostrarMensaje(mensaje: string, color: string = 'primary') {
-    const toast = await this.toastController.create({
-      message: mensaje,
-      duration: 2000,
-      position: 'bottom',
-      color,
-    });
-    await toast.present();
+  irASobreAura() {
+    this.router.navigateByUrl('/tabs/tab6');
   }
-
-    irASobreAura() {
-      this.router.navigateByUrl('/tabs/tab6');
-    }
-
-    abrirConfiguracion() {
-      this.mostrarMensaje('Abriendo Configuración...', 'medium');
-    }
 
   async cerrarSesion() {
-      await this.authService.logout();
-      await this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
-    }
+    await this.authService.logout();
+    await this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
   }
+}

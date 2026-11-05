@@ -26,7 +26,9 @@ import {
   locationOutline,
   warningOutline,
   alertCircleOutline,
+  logOutOutline,
 } from 'ionicons/icons';
+import { AuthService } from '../services/auth';
 
 export interface RegistroAlerta {
   id: number;
@@ -110,17 +112,26 @@ export class Tab3Page {
     (a, b) => new Date(b.fechaISO).getTime() - new Date(a.fechaISO).getTime()
   );
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {
     addIcons({
       arrowBackOutline,
       calendarOutline,
       locationOutline,
       warningOutline,
       alertCircleOutline,
+      logOutOutline,
     });
   }
 
   volverPanel() {
     this.router.navigateByUrl('/tabs/tab2');
+  }
+
+  async cerrarSesion() {
+    await this.authService.logout();
+    await this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
   }
 }
