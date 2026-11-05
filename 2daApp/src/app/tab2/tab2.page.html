@@ -1,19 +1,75 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Galeria
+  <ion-toolbar color="primary">
+    <ion-title class="aura-header-title">
+      AURA, Sistema de alerta ante caidas
     </ion-title>
+
+    <!-- Botón de engranaje arriba a la derecha -->
+    <ion-buttons slot="end">
+      <ion-button id="gear-menu-trigger" aria-label="Menú de opciones">
+        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large"> Galeria</ion-title>
-    </ion-toolbar>
-  </ion-header>
-<h1><p align=center>Mira tus Imágenes</p></h1>
-  <app-explore-container name="Galeria"></app-explore-container>
-  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1HE51g1QFrOdlhF0eLqVjsYNknuh_bIdCYqjAj1sg3g&s=10" alt="Ionic Logo">
+<!-- Menú desplegable del engranaje -->
+<ion-popover trigger="gear-menu-trigger" triggerAction="click" [dismissOnSelect]="true">
+  <ng-template>
+    <ion-content>
+      <ion-list lines="full">
+        <ion-item button="true" detail="false" (click)="abrirConfiguracion()">
+          <ion-icon slot="start" name="options-outline"></ion-icon>
+          <ion-label>Configuración</ion-label>
+        </ion-item>
+        <ion-item button="true" detail="false" (click)="cerrarSesion()">
+          <ion-icon slot="start" name="log-out-outline" color="danger"></ion-icon>
+          <ion-label color="danger">Cerrar sesión</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ng-template>
+</ion-popover>
 
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="aura-container">
+    <!-- Imagen arriba y en el centro -->
+    <div class="image-wrapper">
+      <img src="assets/aura-logo.png" alt="AURA Sistema de alerta ante caídas" class="aura-image" />
+      <h2 class="aura-subtitle">AURA, Sistema de alerta ante caidas</h2>
+    </div>
+
+    <!-- Botones principales -->
+    <div class="buttons-wrapper">
+      <ion-button
+        expand="block"
+        size="large"
+        color="primary"
+        class="action-btn"
+        (click)="verHistorialAlertas()">
+        <ion-icon slot="start" name="notifications-outline"></ion-icon>
+        Historial Alertas
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        size="large"
+        color="secondary"
+        class="action-btn"
+        (click)="verEstadoSensores()">
+        <ion-icon slot="start" name="hardware-chip-outline"></ion-icon>
+        Estado Sensores
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        size="large"
+        color="danger"
+        class="action-btn help-btn"
+        (click)="pedirAyuda()">
+        <ion-icon slot="start" name="alert-circle-outline"></ion-icon>
+        Pedir ayuda
+      </ion-button>
+    </div>
+  </div>
 </ion-content>

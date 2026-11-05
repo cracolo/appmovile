@@ -1,0 +1,20 @@
+.sensores-container {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.sensor-card {
+  margin: 0 0 18px 0;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .sensor-icon {
+    font-size: 2.2rem;
+  }
+}

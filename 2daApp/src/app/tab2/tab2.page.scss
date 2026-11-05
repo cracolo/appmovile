@@ -1,0 +1,57 @@
+.aura-header-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.aura-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 420px;
+  margin: 0 auto;
+  padding-top: 12px;
+}
+
+.image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 28px;
+  text-align: center;
+
+  .aura-image {
+    width: 220px;
+    max-width: 75%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 140, 186, 0.2);
+  }
+
+  .aura-subtitle {
+    margin-top: 16px;
+    margin-bottom: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--ion-text-color);
+  }
+}
+
+.buttons-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+
+  .action-btn {
+    --border-radius: 12px;
+    font-weight: 600;
+    height: 54px;
+  }
+
+  .help-btn {
+    margin-top: 8px;
+    font-weight: 700;
+  }
+}

@@ -1,6 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
-import { validateCredentials } from '../guards/auth.guard';
+import { validateCredentials } from '../guards/auth-guard';
 
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'auth_user';

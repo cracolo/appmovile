@@ -1,0 +1,28 @@
+.ayuda-container {
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.emergency-card {
+  margin: 0 0 20px 0;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(235, 68, 90, 0.15);
+
+  .sos-icon {
+    font-size: 4rem;
+    margin-bottom: 8px;
+  }
+}
+
+.emergency-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+
+  .call-btn {
+    --border-radius: 12px;
+    height: 60px;
+    font-weight: 700;
+  }
+}

@@ -1,14 +1,13 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services/auth';
 
 /**
- * Credenciales válidas definidas aquí (mock local).
- * En producción esto vendría del backend.
+ * Credenciales válidas definidas aquí.
  */
 const VALID_CREDENTIALS = {
-  username: 'admin',
-  password: 'admin123',
+  username: 'cristian',
+  password: 'brevis',
 };
 
 export const authGuard: CanActivateFn = () => {
@@ -19,7 +18,7 @@ export const authGuard: CanActivateFn = () => {
     return true;
   }
 
-  router.navigateByUrl('/login', { replaceUrl: true });
+  router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
   return false;
 };
 
@@ -29,7 +28,7 @@ export const authGuard: CanActivateFn = () => {
  */
 export function validateCredentials(username: string, password: string): boolean {
   return (
-    username.trim() === VALID_CREDENTIALS.username &&
+    username.trim().toLowerCase() === VALID_CREDENTIALS.username &&
     password === VALID_CREDENTIALS.password
   );
 }

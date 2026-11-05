@@ -1,0 +1,113 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="secondary">
+    <ion-buttons slot="start">
+      <ion-button (click)="volverPanel()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Estado Sensores</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="sensores-container">
+    <!-- Tarjeta 1: Estado Sensor Presencia -->
+    <ion-card class="sensor-card">
+      <ion-card-header>
+        <div class="card-title-row">
+          <ion-icon name="walk-outline" color="primary" class="sensor-icon"></ion-icon>
+          <div>
+            <ion-card-title>Estado Sensor Presencia</ion-card-title>
+            <ion-card-subtitle>Monitoreo de movimiento en habitación</ion-card-subtitle>
+          </div>
+        </div>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list lines="full">
+          <ion-item button="true" (click)="cambiarSensorPresencia('activo')">
+            <ion-icon
+              slot="start"
+              [name]="estadoSensorPresencia === 'activo' ? 'checkmark-circle-outline' : 'ellipse-outline'"
+              [color]="estadoSensorPresencia === 'activo' ? 'success' : 'medium'">
+            </ion-icon>
+            <ion-label>
+              <h2><strong>Activo y capturando presencia</strong></h2>
+              <p>Detectando movimiento en tiempo real</p>
+            </ion-label>
+            @if (estadoSensorPresencia === 'activo') {
+              <ion-badge color="success" slot="end">Actual</ion-badge>
+            }
+          </ion-item>
+
+          <ion-item button="true" (click)="cambiarSensorPresencia('pasivo')">
+            <ion-icon
+              slot="start"
+              [name]="estadoSensorPresencia === 'pasivo' ? 'checkmark-circle-outline' : 'ellipse-outline'"
+              [color]="estadoSensorPresencia === 'pasivo' ? 'warning' : 'medium'">
+            </ion-icon>
+            <ion-label>
+              <h2><strong>Pasivo y escuchando</strong></h2>
+              <p>En espera de actividad en el entorno</p>
+            </ion-label>
+            @if (estadoSensorPresencia === 'pasivo') {
+              <ion-badge color="warning" slot="end">Actual</ion-badge>
+            }
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Tarjeta 2: Estado Radar -->
+    <ion-card class="sensor-card">
+      <ion-card-header>
+        <div class="card-title-row">
+          <ion-icon name="radio-outline" color="secondary" class="sensor-icon"></ion-icon>
+          <div>
+            <ion-card-title>Estado Radar</ion-card-title>
+            <ion-card-subtitle>Sensor milimétrico de postura y caídas</ion-card-subtitle>
+          </div>
+        </div>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list lines="full">
+          <ion-item button="true" (click)="cambiarEstadoRadar('activo')">
+            <ion-icon
+              slot="start"
+              [name]="estadoRadar === 'activo' ? 'checkmark-circle-outline' : 'ellipse-outline'"
+              [color]="estadoRadar === 'activo' ? 'success' : 'medium'">
+            </ion-icon>
+            <ion-label>
+              <h2><strong>Activo y midiendo</strong></h2>
+              <p>Calculando distancia, velocidad y nivel de suelo</p>
+            </ion-label>
+            @if (estadoRadar === 'activo') {
+              <ion-badge color="success" slot="end">Actual</ion-badge>
+            }
+          </ion-item>
+
+          <ion-item button="true" (click)="cambiarEstadoRadar('pasivo')">
+            <ion-icon
+              slot="start"
+              [name]="estadoRadar === 'pasivo' ? 'checkmark-circle-outline' : 'ellipse-outline'"
+              [color]="estadoRadar === 'pasivo' ? 'warning' : 'medium'">
+            </ion-icon>
+            <ion-label>
+              <h2><strong>Pasivo y observando</strong></h2>
+              <p>Escaneo de baja frecuencia sin anomalías</p>
+            </ion-label>
+            @if (estadoRadar === 'pasivo') {
+              <ion-badge color="warning" slot="end">Actual</ion-badge>
+            }
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button expand="block" fill="outline" (click)="volverPanel()">
+      <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+      Volver a AURA
+    </ion-button>
+  </div>
+</ion-content>

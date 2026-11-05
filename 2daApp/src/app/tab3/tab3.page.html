@@ -1,17 +1,60 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 3
-    </ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="volverPanel()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Historial Alertas</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="historial-container">
+    <ion-card class="summary-card">
+      <ion-card-header>
+        <ion-card-title>Registro de Eventos</ion-card-title>
+        <ion-card-subtitle>Ordenados por fecha (más recientes primero)</ion-card-subtitle>
+      </ion-card-header>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+      <ion-card-content>
+        <ion-list lines="full">
+          @for (alerta of historialAlertas; track alerta.id) {
+            <ion-item class="alerta-item">
+              <ion-icon
+                slot="start"
+                [name]="alerta.tipoAlerta === 'Caída' ? 'alert-circle-outline' : 'warning-outline'"
+                [color]="alerta.tipoAlerta === 'Caída' ? 'danger' : 'warning'">
+              </ion-icon>
+
+              <ion-label>
+                <h2>
+                  <strong>Alerta de: {{ alerta.tipoAlerta }}</strong>
+                </h2>
+                <p class="info-row">
+                  <ion-icon name="location-outline"></ion-icon>
+                  Lugar: <strong>{{ alerta.lugar }}</strong>
+                </p>
+                <p class="info-row">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  Fecha: {{ alerta.fechaTexto }}
+                </p>
+              </ion-label>
+
+              <ion-badge
+                slot="end"
+                [color]="alerta.tipoAlerta === 'Caída' ? 'danger' : 'warning'">
+                {{ alerta.tipoAlerta }}
+              </ion-badge>
+            </ion-item>
+          }
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button expand="block" fill="outline" (click)="volverPanel()">
+      <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+      Volver a AURA
+    </ion-button>
+  </div>
 </ion-content>

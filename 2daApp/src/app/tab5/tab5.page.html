@@ -1,0 +1,51 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-button (click)="volverPanel()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Pedir Ayuda</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="ayuda-container">
+    <ion-card class="emergency-card">
+      <ion-card-header class="ion-text-center">
+        <ion-icon name="alert-circle-outline" color="danger" class="sos-icon"></ion-icon>
+        <ion-card-title>Asistencia de Emergencia</ion-card-title>
+        <ion-card-subtitle>Selecciona a quién deseas llamar de inmediato</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="emergency-buttons">
+          <ion-button
+            expand="block"
+            size="large"
+            color="primary"
+            class="call-btn"
+            (click)="llamarFamiliar()">
+            <ion-icon slot="start" name="people-outline"></ion-icon>
+            Llamar al Familiar más cercano
+          </ion-button>
+
+          <ion-button
+            expand="block"
+            size="large"
+            color="danger"
+            class="call-btn"
+            (click)="llamarAmbulancia()">
+            <ion-icon slot="start" name="medkit-outline"></ion-icon>
+            Llamar a Ambulancia
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button expand="block" fill="outline" (click)="volverPanel()">
+      <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+      Volver a AURA
+    </ion-button>
+  </div>
+</ion-content>
