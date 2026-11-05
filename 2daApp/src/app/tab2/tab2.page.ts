@@ -13,16 +13,18 @@ import {
   IonList,
   IonItem,
   IonLabel,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
   ToastController,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   settingsOutline,
-  notificationsOutline,
-  hardwareChipOutline,
-  alertCircleOutline,
   logOutOutline,
   optionsOutline,
+  informationCircleOutline,
 } from 'ionicons/icons';
 import { AuthService } from '../services/auth';
 
@@ -44,6 +46,10 @@ import { AuthService } from '../services/auth';
     IonList,
     IonItem,
     IonLabel,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
   ],
 })
 export class Tab2Page {
@@ -54,11 +60,9 @@ export class Tab2Page {
   ) {
     addIcons({
       settingsOutline,
-      notificationsOutline,
-      hardwareChipOutline,
-      alertCircleOutline,
       logOutOutline,
       optionsOutline,
+      informationCircleOutline,
     });
   }
 
@@ -72,24 +76,16 @@ export class Tab2Page {
     await toast.present();
   }
 
-  verHistorialAlertas() {
-    this.router.navigateByUrl('/tabs/tab3');
-  }
+    irASobreAura() {
+      this.router.navigateByUrl('/tabs/tab6');
+    }
 
-  verEstadoSensores() {
-    this.router.navigateByUrl('/tabs/tab4');
-  }
-
-  pedirAyuda() {
-    this.router.navigateByUrl('/tabs/tab5');
-  }
-
-  abrirConfiguracion() {
-    this.mostrarMensaje('Abriendo Configuración...', 'medium');
-  }
+    abrirConfiguracion() {
+      this.mostrarMensaje('Abriendo Configuración...', 'medium');
+    }
 
   async cerrarSesion() {
-    await this.authService.logout();
-    await this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
+      await this.authService.logout();
+      await this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
+    }
   }
-}

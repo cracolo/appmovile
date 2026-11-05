@@ -1,0 +1,34 @@
+.sobre-aura-container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: 16px;
+}
+
+.info-card {
+  margin: 0 0 16px 0;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+
+  p {
+    font-size: 0.96rem;
+    line-height: 1.55;
+    margin: 0;
+  }
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .section-icon {
+    font-size: 1.8rem;
+  }
+}
+
+.closing-text {
+  margin-top: 16px !important;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+}
+

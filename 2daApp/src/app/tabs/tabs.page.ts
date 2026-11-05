@@ -11,6 +11,7 @@ import { addIcons } from 'ionicons';
 import {
   homeOutline,
   shieldCheckmarkOutline,
+  informationCircleOutline,
   notificationsOutline,
   hardwareChipOutline,
   alertCircleOutline,
@@ -29,6 +30,7 @@ export class TabsPage {
     addIcons({
       homeOutline,
       shieldCheckmarkOutline,
+      informationCircleOutline,
       notificationsOutline,
       hardwareChipOutline,
       alertCircleOutline,

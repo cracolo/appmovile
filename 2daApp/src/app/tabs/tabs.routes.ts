@@ -37,6 +37,12 @@ export const routes: Routes = [
           import('../tab5/tab5.page').then((m) => m.Tab5Page),
       },
       {
+        path: 'tab6',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('../tab6/tab6.page').then((m) => m.Tab6Page),
+      },
+      {
         path: '',
         redirectTo: 'tab1',
         pathMatch: 'full',

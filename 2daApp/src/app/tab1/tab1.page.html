@@ -23,61 +23,60 @@
           <ion-item fill="outline" class="ion-margin-bottom">
             <ion-icon slot="start" name="person-outline"></ion-icon>
             <ion-label position="floating">Usuario</ion-label>
-            <ion-input
-              type="text"
-              formControlName="username"
-              autocomplete="username"
-              placeholder="Ej: cristian">
+            <ion-input type="text" formControlName="username" autocomplete="username" placeholder="Ej: cristian">
             </ion-input>
           </ion-item>
 
-          @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
-            <ion-text color="danger" class="error-hint">
-              <small>Ingresa tu nombre de usuario</small>
-            </ion-text>
+          @if (usernameControl?.invalid && (usernameControl?.touched || usernameControl?.dirty)) {
+          <ion-text color="danger" class="error-hint">
+            @if (usernameControl?.errors?.['required']) {
+            <small>El nombre de usuario es obligatorio.</small>
+            } @else if (usernameControl?.errors?.['minlength']) {
+            <small>El usuario debe tener al menos 4 caracteres.</small>
+            } @else if (usernameControl?.errors?.['maxlength']) {
+            <small>El usuario no puede superar los 20 caracteres.</small>
+            } @else if (usernameControl?.errors?.['pattern']) {
+            <small>Solo se permiten letras, números, puntos, guiones y guion bajo (sin espacios).</small>
+            }
+          </ion-text>
           }
 
           <ion-item fill="outline" class="ion-margin-bottom">
             <ion-icon slot="start" name="key-outline"></ion-icon>
             <ion-label position="floating">Contraseña</ion-label>
-            <ion-input
-              [type]="showPassword ? 'text' : 'password'"
-              formControlName="password"
-              autocomplete="current-password"
-              placeholder="Ingresa tu contraseña">
+            <ion-input [type]="showPassword ? 'text' : 'password'" formControlName="password"
+              placeholder="Ingresa tu contraseña (mín. 6 caracteres)">
             </ion-input>
-            <ion-button
-              slot="end"
-              fill="clear"
-              color="medium"
-              type="button"
-              (click)="togglePassword()">
+            <ion-button slot="end" fill="clear" color="medium" type="button" (click)="togglePassword()">
               <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
             </ion-button>
           </ion-item>
 
-          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-            <ion-text color="danger" class="error-hint">
-              <small>Ingresa tu contraseña</small>
-            </ion-text>
+          @if (passwordControl?.invalid && (passwordControl?.touched || passwordControl?.dirty)) {
+          <ion-text color="danger" class="error-hint">
+            @if (passwordControl?.errors?.['required']) {
+            <small>La contraseña es obligatoria.</small>
+            } @else if (passwordControl?.errors?.['minlength']) {
+            <small>La contraseña debe tener al menos 6 caracteres.</small>
+            } @else if (passwordControl?.errors?.['maxlength']) {
+            <small>La contraseña no puede superar los 32 caracteres.</small>
+            }
+          </ion-text>
           }
 
           @if (errorMessage) {
-            <ion-text color="danger">
-              <p class="ion-text-center error-msg">{{ errorMessage }}</p>
-            </ion-text>
+          <ion-text color="danger">
+            <p class="ion-text-center error-msg">{{ errorMessage }}</p>
+          </ion-text>
           }
 
-          <ion-button
-            expand="block"
-            type="submit"
-            class="ion-margin-top login-btn"
+          <ion-button expand="block" type="submit" class="ion-margin-top login-btn"
             [disabled]="loginForm.invalid || isLoading">
             @if (isLoading) {
-              <ion-spinner name="crescent"></ion-spinner>
+            <ion-spinner name="crescent"></ion-spinner>
             } @else {
-              <ion-icon slot="start" name="log-in-outline"></ion-icon>
-              <span>Ingresar</span>
+            <ion-icon slot="start" name="log-in-outline"></ion-icon>
+            <span>Ingresar</span>
             }
           </ion-button>
         </form>

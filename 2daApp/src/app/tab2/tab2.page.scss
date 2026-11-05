@@ -38,20 +38,44 @@
   }
 }
 
+.welcome-card {
+  width: 100%;
+  margin: 0 0 20px 0;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+
+  ion-card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .welcome-text {
+    font-size: 0.98rem;
+    line-height: 1.6;
+
+    p {
+      margin-bottom: 14px;
+    }
+
+    .highlight-text {
+      font-weight: 600;
+      color: var(--ion-color-primary);
+      margin-bottom: 0;
+    }
+  }
+}
+
 .buttons-wrapper {
   display: flex;
   flex-direction: column;
   gap: 16px;
   width: 100%;
+  margin-bottom: 16px;
 
   .action-btn {
     --border-radius: 12px;
     font-weight: 600;
     height: 54px;
-  }
-
-  .help-btn {
-    margin-top: 8px;
-    font-weight: 700;
   }
 }

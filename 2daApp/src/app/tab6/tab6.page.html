@@ -1,0 +1,100 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="volverPanel()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Sobre Aura</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="sobre-aura-container">
+    <!-- Introducción -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <ion-card-title>Bienvenido a Aura.</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>
+          Sabemos que cuidar a un padre o abuelo que vive solo puede generar preocupación. Quieres que estén seguros, pero también respetas su independencia y su privacidad.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ¿Qué es Aura? -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <div class="card-title-row">
+          <ion-icon name="information-circle-outline" color="primary" class="section-icon"></ion-icon>
+          <ion-card-title>¿Qué es Aura?</ion-card-title>
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <p>
+          Aura es un sistema de cuidado silencioso que transforma el internet de tu hogar en un protector invisible. No usamos cámaras, no grabamos sonidos y no obligamos a la persona a usar pulseras incómodas.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ¿Cómo funciona? -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <div class="card-title-row">
+          <ion-icon name="wifi-outline" color="secondary" class="section-icon"></ion-icon>
+          <ion-card-title>¿Cómo funciona?</ion-card-title>
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <p>
+          Aura detecta si hay actividad en la casa (como caminar o moverse) y, lo más importante, detecta si alguien se ha caído o ha dejado de moverse por un tiempo peligroso. Lo hace analizando las ondas de Wi-Fi que ya están en el aire.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Lo que Aura hace por ti -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <ion-card-title>Lo que Aura hace por ti:</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="full">
+          <ion-item>
+            <ion-icon slot="start" name="notifications-outline" color="primary"></ion-icon>
+            <ion-label class="ion-text-wrap">
+              <h2><strong>Te avisa lo importante:</strong></h2>
+              <p>Si algo no anda bien, recibirás una notificación en tu celular de inmediato.</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item>
+            <ion-icon slot="start" name="shield-checkmark-outline" color="success"></ion-icon>
+            <ion-label class="ion-text-wrap">
+              <h2><strong>Respeta la privacidad:</strong></h2>
+              <p>Nadie te está mirando. Es como un "sexto sentido" digital.</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item>
+            <ion-icon slot="start" name="flash-outline" color="warning"></ion-icon>
+            <ion-label class="ion-text-wrap">
+              <h2><strong>Cero complicaciones:</strong></h2>
+              <p>No hay que cargar baterías ni recordar ponerse un aparato. Solo funciona, en segundo plano.</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+
+        <p class="closing-text">
+          Con Aura, la persona mayor mantiene su rutina y su espacio, y tú ganas la tranquilidad de saber que, si algo pasa, te enterarás a tiempo.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button expand="block" fill="outline" (click)="volverPanel()">
+      <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+      Volver a AURA
+    </ion-button>
+  </div>
+</ion-content>
+

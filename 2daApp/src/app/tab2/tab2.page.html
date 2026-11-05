@@ -39,36 +39,32 @@
       <h2 class="aura-subtitle">AURA, Sistema de alerta ante caidas</h2>
     </div>
 
-    <!-- Botones principales -->
+    <!-- Texto de bienvenida -->
+    <ion-card class="welcome-card">
+      <ion-card-header>
+        <ion-card-title>Aura: Tranquilidad para ti y los que más quieres.</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="welcome-text">
+        <p>
+          Aura es un asistente invisible que cuida de tus seres queridos mayores sin invadir su privacidad. A diferencia
+          de las cámaras o los collares de emergencia, Aura no requiere que la persona use nada encima ni se sienta
+          vigilada.
+        </p>
+        <p>
+          Simplemente, utiliza la señal de internet de la casa para "sentir" si hay movimiento o si alguien ha dejado de
+          moverse por mucho tiempo. Si algo anda mal, te envía una alerta directa a tu teléfono al instante.
+        </p>
+        <p class="highlight-text">
+          Es la forma más sencilla de estar cerca, incluso cuando estás lejos.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Botón hacia la pestaña Sobre Aura -->
     <div class="buttons-wrapper">
-      <ion-button
-        expand="block"
-        size="large"
-        color="primary"
-        class="action-btn"
-        (click)="verHistorialAlertas()">
-        <ion-icon slot="start" name="notifications-outline"></ion-icon>
-        Historial Alertas
-      </ion-button>
-
-      <ion-button
-        expand="block"
-        size="large"
-        color="secondary"
-        class="action-btn"
-        (click)="verEstadoSensores()">
-        <ion-icon slot="start" name="hardware-chip-outline"></ion-icon>
-        Estado Sensores
-      </ion-button>
-
-      <ion-button
-        expand="block"
-        size="large"
-        color="danger"
-        class="action-btn help-btn"
-        (click)="pedirAyuda()">
-        <ion-icon slot="start" name="alert-circle-outline"></ion-icon>
-        Pedir ayuda
+        (click)="irASobreAura()">
+        <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+        Sobre Aura
       </ion-button>
     </div>
   </div>
