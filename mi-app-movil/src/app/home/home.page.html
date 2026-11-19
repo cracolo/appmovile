@@ -13,8 +13,26 @@
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Estamos listos Shorooooo!</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  @if (photoService.photos.length === 0) {
+    <div id="container">
+      <strong>Estamos listos Shorooooo!</strong>
+      <p>Presiona el botón de la cámara para sacar y guardar tu primera foto.</p>
+    </div>
+  } @else {
+    <ion-grid>
+      <ion-row>
+        @for (photo of photoService.photos; track photo.filepath) {
+          <ion-col size="6">
+            <ion-img [src]="photo.webviewPath" alt="Foto guardada"></ion-img>
+          </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
+  }
+
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="addPhotoToGallery()" aria-label="Tomar foto">
+      <ion-icon name="camera"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
