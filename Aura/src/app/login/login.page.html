@@ -20,16 +20,17 @@
 
       <ion-card-content>
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <ion-item fill="outline" class="ion-margin-bottom">
-            <ion-icon slot="start" name="person-outline"></ion-icon>
-            <ion-label position="floating">Usuario</ion-label>
-            <ion-input
-              type="text"
-              formControlName="username"
-              autocomplete="username"
-              placeholder="cuidador o paciente">
-            </ion-input>
-          </ion-item>
+          <ion-input
+            class="ion-margin-bottom"
+            type="text"
+            label="Usuario"
+            labelPlacement="floating"
+            fill="outline"
+            formControlName="username"
+            autocomplete="username"
+            placeholder="cuidador o paciente">
+            <ion-icon slot="start" name="person-outline" aria-hidden="true"></ion-icon>
+          </ion-input>
 
           @if (usernameControl.invalid && (usernameControl.touched || usernameControl.dirty)) {
             <ion-text color="danger" class="error-hint">
@@ -41,24 +42,30 @@
             </ion-text>
           }
 
-          <ion-item fill="outline" class="ion-margin-bottom">
-            <ion-icon slot="start" name="key-outline"></ion-icon>
-            <ion-label position="floating">Contraseña</ion-label>
-            <ion-input
-              [type]="showPassword ? 'text' : 'password'"
-              formControlName="password"
-              autocomplete="current-password"
-              placeholder="Ingresa tu clave">
-            </ion-input>
+          <ion-input
+            class="ion-margin-bottom"
+            [type]="showPassword ? 'text' : 'password'"
+            label="Contraseña"
+            labelPlacement="floating"
+            fill="outline"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="Ingresa tu clave">
+            <ion-icon slot="start" name="key-outline" aria-hidden="true"></ion-icon>
             <ion-button
               slot="end"
               fill="clear"
               color="medium"
               type="button"
+              aria-label="Mostrar u ocultar contraseña"
               (click)="togglePassword()">
-              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+              <ion-icon
+                slot="icon-only"
+                [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+                aria-hidden="true">
+              </ion-icon>
             </ion-button>
-          </ion-item>
+          </ion-input>
 
           @if (passwordControl.invalid && (passwordControl.touched || passwordControl.dirty)) {
             <ion-text color="danger" class="error-hint">
