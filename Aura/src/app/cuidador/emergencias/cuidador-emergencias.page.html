@@ -1,0 +1,69 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="danger">
+    <ion-title>Llamadas y Emergencias</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="light" fill="outline" size="small" (click)="cerrarSesion()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Salir
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="emergencias-container">
+    <!-- Contacto directo con el paciente -->
+    <ion-card class="action-card">
+      <ion-card-header class="ion-text-center">
+        <ion-icon name="person-circle-outline" color="primary" class="hero-icon"></ion-icon>
+        <ion-card-title>Comunicación con el Paciente</ion-card-title>
+        <ion-card-subtitle>Verifica de inmediato cómo se encuentra</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-button
+          expand="block"
+          size="large"
+          color="primary"
+          class="call-btn"
+          (click)="llamar('Paciente', '+56912345678')">
+          <ion-icon slot="start" name="call-outline"></ion-icon>
+          Llamar al Paciente
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Servicios de emergencia -->
+    <ion-card class="action-card">
+      <ion-card-header class="ion-text-center">
+        <ion-icon name="alert-circle-outline" color="danger" class="hero-icon"></ion-icon>
+        <ion-card-title>Servicios de Emergencia</ion-card-title>
+        <ion-card-subtitle>Atención urgente en Chile</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="emergency-buttons">
+          <ion-button
+            expand="block"
+            size="large"
+            color="danger"
+            class="call-btn"
+            (click)="llamar('Ambulancia SAMU (131)', '131')">
+            <ion-icon slot="start" name="medkit-outline"></ion-icon>
+            Llamar a Emergencias (131)
+          </ion-button>
+
+          <ion-button
+            expand="block"
+            size="large"
+            color="warning"
+            class="call-btn"
+            (click)="llamar('Carabineros (133)', '133')">
+            <ion-icon slot="start" name="shield-outline"></ion-icon>
+            Llamar a Carabineros (133)
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

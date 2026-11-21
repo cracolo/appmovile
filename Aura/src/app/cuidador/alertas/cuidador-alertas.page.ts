@@ -21,19 +21,21 @@ import {
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
-  arrowBackOutline,
-  radioOutline,
-  walkOutline,
-  checkmarkCircleOutline,
-  ellipseOutline,
   logOutOutline,
+  checkmarkDoneOutline,
+  refreshOutline,
+  alertCircleOutline,
+  warningOutline,
+  hardwareChipOutline,
+  calendarOutline,
 } from 'ionicons/icons';
-import { AuthService } from '../services/auth';
+import { AuthService } from '../../services/auth';
+import { AuraDataService } from '../../services/aura-data.service';
 
 @Component({
-  selector: 'app-tab4',
-  templateUrl: 'tab4.page.html',
-  styleUrls: ['tab4.page.scss'],
+  selector: 'app-cuidador-alertas',
+  templateUrl: './cuidador-alertas.page.html',
+  styleUrls: ['./cuidador-alertas.page.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -55,38 +57,37 @@ import { AuthService } from '../services/auth';
     IonBadge,
   ],
 })
-export class Tab4Page {
-  estadoSensorPresencia: 'activo' | 'pasivo' = 'activo';
-  estadoRadar: 'activo' | 'pasivo' = 'activo';
-
+export class CuidadorAlertasPage {
   constructor(
-    private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    public auraData: AuraDataService,
+    private router: Router
   ) {
     addIcons({
-      arrowBackOutline,
-      radioOutline,
-      walkOutline,
-      checkmarkCircleOutline,
-      ellipseOutline,
       logOutOutline,
+      checkmarkDoneOutline,
+      refreshOutline,
+      alertCircleOutline,
+      warningOutline,
+      hardwareChipOutline,
+      calendarOutline,
     });
   }
 
-  cambiarSensorPresencia(modo: 'activo' | 'pasivo') {
-    this.estadoSensorPresencia = modo;
+  ionViewWillEnter() {
+    void this.auraData.cargarDatosPersistidos();
   }
 
-  cambiarEstadoRadar(modo: 'activo' | 'pasivo') {
-    this.estadoRadar = modo;
+  async marcarLeidas() {
+    await this.auraData.marcarTodasLeidas();
   }
 
-  volverPanel() {
-    this.router.navigateByUrl('/tabs/tab2');
+  async restablecerDemo() {
+    await this.auraData.restablecerAlertasDemo();
   }
 
   async cerrarSesion() {
     await this.authService.logout();
-    await this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
+    await this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 }

@@ -1,0 +1,65 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Ubicación del Paciente</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="light" fill="outline" size="small" (click)="cerrarSesion()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Salir
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="mapa-container">
+    <!-- Mapa interactivo Leaflet + OpenStreetMap -->
+    <ion-card class="map-card">
+      <div #mapContainer class="leaflet-map"></div>
+    </ion-card>
+
+    <!-- Información de la última posición -->
+    <ion-card class="coords-card">
+      <ion-card-header>
+        <div class="card-header-row">
+          <div>
+            <ion-card-title>Última posición registrada</ion-card-title>
+            <ion-card-subtitle>{{ auraData.ubicacion().referencia }}</ion-card-subtitle>
+          </div>
+          <ion-badge [color]="auraData.ubicacion().fuente === 'gps' ? 'success' : 'secondary'">
+            {{ auraData.ubicacion().fuente === 'gps' ? 'GPS Real' : (auraData.ubicacion().fuente === 'simulada' ? 'Simulada' : 'Demo') }}
+          </ion-badge>
+        </div>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="coords-info">
+          <p>
+            <ion-icon name="navigate-outline" color="primary"></ion-icon>
+            <strong>Coordenadas:</strong>
+            {{ auraData.ubicacion().lat.toFixed(5) }}, {{ auraData.ubicacion().lng.toFixed(5) }}
+          </p>
+          <p>
+            <ion-icon name="radio-outline" color="secondary"></ion-icon>
+            <strong>Precisión estimada:</strong> ±{{ auraData.ubicacion().precisionMetros }} m
+          </p>
+          <p>
+            <ion-icon name="time-outline" color="medium"></ion-icon>
+            <strong>Actualizado:</strong> {{ auraData.ubicacion().fechaTexto }}
+          </p>
+        </div>
+
+        <div class="map-actions">
+          <ion-button expand="block" color="primary" (click)="abrirEnGoogleMaps()">
+            <ion-icon slot="start" name="map-outline"></ion-icon>
+            Abrir en Google Maps
+          </ion-button>
+
+          <ion-button expand="block" fill="outline" color="secondary" (click)="centrarEnPaciente()">
+            <ion-icon slot="start" name="locate-outline"></ion-icon>
+            Centrar y actualizar
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

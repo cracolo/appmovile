@@ -1,0 +1,99 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>AURA · Cuidador</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="light" fill="outline" size="small" (click)="cerrarSesion()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Salir
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="aura-container">
+    <div class="hero-header">
+      <img src="assets/aura-logo.png" alt="Logo AURA" class="aura-logo" />
+      <h1>AURA</h1>
+      <p class="subtitle">Sistema de alerta y acompañamiento para adultos mayores</p>
+    </div>
+
+    <!-- Resumen conciso de qué trata AURA -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <ion-card-title>¿De qué trata AURA?</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="intro-text">
+          AURA conecta al adulto mayor con su cuidador en tiempo real usando los sensores del teléfono, sin cámaras ni dispositivos invasivos.
+        </p>
+
+        <ion-list lines="none" class="features-list">
+          <ion-item>
+            <ion-icon slot="start" name="hardware-chip-outline" color="primary"></ion-icon>
+            <ion-label class="ion-text-wrap">
+              <h3><strong>Detección por giroscopio</strong></h3>
+              <p>Identifica movimientos bruscos o posibles caídas desde el celular del paciente.</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item>
+            <ion-icon slot="start" name="map-outline" color="secondary"></ion-icon>
+            <ion-label class="ion-text-wrap">
+              <h3><strong>Ubicación en el mapa</strong></h3>
+              <p>Permite localizar al paciente rápidamente mediante geolocalización.</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item>
+            <ion-icon slot="start" name="call-outline" color="danger"></ion-icon>
+            <ion-label class="ion-text-wrap">
+              <h3><strong>Respuesta inmediata</strong></h3>
+              <p>Acceso directo a llamadas de emergencia y botón de pánico.</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Resumen rápido del estado actual del paciente -->
+    <ion-card class="status-card">
+      <ion-card-header>
+        <ion-card-title>Estado del Paciente</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="status-grid">
+          <div class="status-chip">
+            <ion-icon name="notifications-outline" color="danger"></ion-icon>
+            <div>
+              <strong>{{ auraData.alertas().length }} eventos</strong>
+              <span>{{ auraData.alertasSinLeer() }} sin leer</span>
+            </div>
+          </div>
+
+          <div class="status-chip">
+            <ion-icon
+              name="hardware-chip-outline"
+              [color]="auraData.estadoSensores().giroscopioActivo ? 'success' : 'medium'">
+            </ion-icon>
+            <div>
+              <strong>Giroscopio</strong>
+              <span>{{ auraData.estadoSensores().giroscopioActivo ? 'Activo' : 'En espera' }}</span>
+            </div>
+          </div>
+
+          <div class="status-chip">
+            <ion-icon
+              name="location-outline"
+              [color]="auraData.estadoSensores().gpsActivo ? 'success' : 'primary'">
+            </ion-icon>
+            <div>
+              <strong>GPS</strong>
+              <span>{{ auraData.estadoSensores().gpsActivo ? 'En vivo' : 'Última pos.' }}</span>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

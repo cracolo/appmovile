@@ -1,33 +1,40 @@
 <ion-tabs>
   <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="tab1">
-      <ion-icon name="home-outline"></ion-icon>
-      <ion-label>Bienvenida</ion-label>
-    </ion-tab-button>
+    @if (authService.isCuidador()) {
+      <ion-tab-button tab="cuidador-inicio">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        <ion-label>AURA</ion-label>
+      </ion-tab-button>
 
-    <ion-tab-button tab="tab2" [disabled]="!authService.isAuthenticated()">
-      <ion-icon name="shield-checkmark-outline"></ion-icon>
-      <ion-label>AURA</ion-label>
-    </ion-tab-button>
+      <ion-tab-button tab="cuidador-alertas">
+        <ion-icon name="notifications-outline"></ion-icon>
+        <ion-label>Alertas</ion-label>
+        @if (auraData.alertasSinLeer() > 0) {
+          <ion-badge color="danger">{{ auraData.alertasSinLeer() }}</ion-badge>
+        }
+      </ion-tab-button>
 
-    <ion-tab-button tab="tab6" [disabled]="!authService.isAuthenticated()">
-      <ion-icon name="information-circle-outline"></ion-icon>
-      <ion-label>Sobre Aura</ion-label>
-    </ion-tab-button>
+      <ion-tab-button tab="cuidador-mapa">
+        <ion-icon name="map-outline"></ion-icon>
+        <ion-label>Ubicación</ion-label>
+      </ion-tab-button>
 
-    <ion-tab-button tab="tab3" [disabled]="!authService.isAuthenticated()">
-      <ion-icon name="notifications-outline"></ion-icon>
-      <ion-label>Alertas</ion-label>
-    </ion-tab-button>
+      <ion-tab-button tab="cuidador-emergencias">
+        <ion-icon name="call-outline"></ion-icon>
+        <ion-label>Emergencias</ion-label>
+      </ion-tab-button>
+    }
 
-    <ion-tab-button tab="tab4" [disabled]="!authService.isAuthenticated()">
-      <ion-icon name="hardware-chip-outline"></ion-icon>
-      <ion-label>Sensores</ion-label>
-    </ion-tab-button>
+    @if (authService.isPaciente()) {
+      <ion-tab-button tab="paciente-sensores">
+        <ion-icon name="hardware-chip-outline"></ion-icon>
+        <ion-label>Sensores</ion-label>
+      </ion-tab-button>
 
-    <ion-tab-button tab="tab5" [disabled]="!authService.isAuthenticated()">
-      <ion-icon name="alert-circle-outline"></ion-icon>
-      <ion-label>Ayuda</ion-label>
-    </ion-tab-button>
+      <ion-tab-button tab="paciente-panico">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <ion-label>Pánico</ion-label>
+      </ion-tab-button>
+    }
   </ion-tab-bar>
 </ion-tabs>

@@ -1,50 +1,68 @@
 import { Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
-import { authGuard } from '../guards/auth-guard';
+import { authGuard, roleGuard } from '../guards/auth-guard';
 
 export const routes: Routes = [
   {
     path: '',
     component: TabsPage,
+    canActivate: [authGuard],
     children: [
+      // --- Vistas del Cuidador ---
       {
-        path: 'tab1',
+        path: 'cuidador-inicio',
+        canActivate: [roleGuard('cuidador')],
         loadComponent: () =>
-          import('../tab1/tab1.page').then((m) => m.Tab1Page),
+          import('../cuidador/inicio/cuidador-inicio.page').then(
+            (m) => m.CuidadorInicioPage
+          ),
       },
       {
-        path: 'tab2',
-        canActivate: [authGuard],
+        path: 'cuidador-alertas',
+        canActivate: [roleGuard('cuidador')],
         loadComponent: () =>
-          import('../tab2/tab2.page').then((m) => m.Tab2Page),
+          import('../cuidador/alertas/cuidador-alertas.page').then(
+            (m) => m.CuidadorAlertasPage
+          ),
       },
       {
-        path: 'tab3',
-        canActivate: [authGuard],
+        path: 'cuidador-mapa',
+        canActivate: [roleGuard('cuidador')],
         loadComponent: () =>
-          import('../tab3/tab3.page').then((m) => m.Tab3Page),
+          import('../cuidador/mapa/cuidador-mapa.page').then(
+            (m) => m.CuidadorMapaPage
+          ),
       },
       {
-        path: 'tab4',
-        canActivate: [authGuard],
+        path: 'cuidador-emergencias',
+        canActivate: [roleGuard('cuidador')],
         loadComponent: () =>
-          import('../tab4/tab4.page').then((m) => m.Tab4Page),
+          import('../cuidador/emergencias/cuidador-emergencias.page').then(
+            (m) => m.CuidadorEmergenciasPage
+          ),
+      },
+
+      // --- Vistas del Paciente ---
+      {
+        path: 'paciente-sensores',
+        canActivate: [roleGuard('paciente')],
+        loadComponent: () =>
+          import('../paciente/sensores/paciente-sensores.page').then(
+            (m) => m.PacienteSensoresPage
+          ),
       },
       {
-        path: 'tab5',
-        canActivate: [authGuard],
+        path: 'paciente-panico',
+        canActivate: [roleGuard('paciente')],
         loadComponent: () =>
-          import('../tab5/tab5.page').then((m) => m.Tab5Page),
+          import('../paciente/panico/paciente-panico.page').then(
+            (m) => m.PacientePanicoPage
+          ),
       },
-      {
-        path: 'tab6',
-        canActivate: [authGuard],
-        loadComponent: () =>
-          import('../tab6/tab6.page').then((m) => m.Tab6Page),
-      },
+
       {
         path: '',
-        redirectTo: 'tab1',
+        redirectTo: 'cuidador-inicio',
         pathMatch: 'full',
       },
     ],

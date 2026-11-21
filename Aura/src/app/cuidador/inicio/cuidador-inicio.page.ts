@@ -13,18 +13,26 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardContent,
+  IonList,
+  IonItem,
+  IonLabel,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   logOutOutline,
-  informationCircleOutline,
+  hardwareChipOutline,
+  mapOutline,
+  callOutline,
+  notificationsOutline,
+  locationOutline,
 } from 'ionicons/icons';
-import { AuthService } from '../services/auth';
+import { AuthService } from '../../services/auth';
+import { AuraDataService } from '../../services/aura-data.service';
 
 @Component({
-  selector: 'app-tab2',
-  templateUrl: 'tab2.page.html',
-  styleUrls: ['tab2.page.scss'],
+  selector: 'app-cuidador-inicio',
+  templateUrl: './cuidador-inicio.page.html',
+  styleUrls: ['./cuidador-inicio.page.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -39,25 +47,33 @@ import { AuthService } from '../services/auth';
     IonCardHeader,
     IonCardTitle,
     IonCardContent,
+    IonList,
+    IonItem,
+    IonLabel,
   ],
 })
-export class Tab2Page {
+export class CuidadorInicioPage {
   constructor(
     private authService: AuthService,
+    public auraData: AuraDataService,
     private router: Router
   ) {
     addIcons({
       logOutOutline,
-      informationCircleOutline,
+      hardwareChipOutline,
+      mapOutline,
+      callOutline,
+      notificationsOutline,
+      locationOutline,
     });
   }
 
-  irASobreAura() {
-    this.router.navigateByUrl('/tabs/tab6');
+  ionViewWillEnter() {
+    void this.auraData.cargarDatosPersistidos();
   }
 
   async cerrarSesion() {
     await this.authService.logout();
-    await this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
+    await this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 }

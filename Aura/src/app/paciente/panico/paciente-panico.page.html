@@ -1,0 +1,66 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="danger">
+    <ion-title>Botón de Pánico</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="light" fill="outline" size="small" (click)="cerrarSesion()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Salir
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="panico-container">
+    <!-- Botón SOS gigante -->
+    <ion-card class="sos-card">
+      <ion-card-content class="ion-text-center">
+        <h2>¿Necesitas ayuda urgente?</h2>
+        <p>Presiona el botón SOS para enviar una alerta inmediata a tu cuidador.</p>
+
+        <button type="button" class="sos-button" (click)="activarPanico()">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <span>SOS</span>
+        </button>
+
+        @if (ultimaAlertaEnviada) {
+          <p class="sent-feedback">
+            Alerta enviada a las {{ ultimaAlertaEnviada }}
+          </p>
+        }
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Llamadas directas -->
+    <ion-card class="calls-card">
+      <ion-card-header>
+        <ion-card-title>Llamadas Rápidas</ion-card-title>
+        <ion-card-subtitle>Contacto inmediato con familiares o emergencias</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="call-buttons">
+          <ion-button
+            expand="block"
+            size="large"
+            color="primary"
+            class="action-btn"
+            (click)="llamar('Familiar / Cuidador', '+56987654321')">
+            <ion-icon slot="start" name="people-outline"></ion-icon>
+            Llamar a Familiar / Cuidador
+          </ion-button>
+
+          <ion-button
+            expand="block"
+            size="large"
+            color="danger"
+            class="action-btn"
+            (click)="llamar('Emergencias / Ambulancia (131)', '131')">
+            <ion-icon slot="start" name="medkit-outline"></ion-icon>
+            Llamar a Emergencias (131)
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

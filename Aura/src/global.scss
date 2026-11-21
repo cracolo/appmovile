@@ -56,3 +56,13 @@ ion-item {
   --background: transparent;
   --color: var(--ion-text-color);
 }
+
+/* Marcador personalizado del paciente en Leaflet */
+.aura-patient-marker .marker-pin {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #e11d48;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 6px rgba(225, 29, 72, 0.28), 0 2px 6px rgba(0, 0, 0, 0.35);
+}

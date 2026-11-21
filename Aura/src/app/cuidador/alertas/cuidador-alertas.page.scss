@@ -1,0 +1,54 @@
+.alertas-container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alertas-card {
+  margin: 0;
+  border-radius: 14px;
+}
+
+.alerta-item {
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+
+  &.no-leida {
+    --background: rgba(2, 132, 199, 0.06);
+  }
+}
+
+.nuevo-dot {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--ion-color-danger);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.detalle-text {
+  margin: 4px 0 6px;
+  color: var(--ion-text-color);
+  font-size: 0.88rem;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+  margin: 2px 0;
+}
