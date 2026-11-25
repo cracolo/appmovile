@@ -12,16 +12,22 @@
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="paciente-container">
-    <!-- Estado general -->
-    <ion-card class="status-banner" [class.activo]="sensores.giroscopioActivo() || sensores.gpsActivo()">
+    <!-- Estado general y fase de la máquina de estados -->
+    <ion-card
+      class="status-banner"
+      [class.activo]="sensores.giroscopioActivo() || sensores.gpsActivo()"
+      [class.evaluando]="sensores.fase() === 'evaluando_inmovilidad'"
+      [class.alerta]="sensores.fase() === 'confirmando_usuario' || sensores.fase() === 'alerta_enviada'">
       <ion-card-content class="banner-content">
         <ion-icon
           [name]="(sensores.giroscopioActivo() || sensores.gpsActivo()) ? 'shield-checkmark-outline' : 'shield-outline'"
-          [color]="(sensores.giroscopioActivo() || sensores.gpsActivo()) ? 'success' : 'medium'">
+          [color]="sensores.fase() === 'alerta_enviada' || sensores.fase() === 'confirmando_usuario' ? 'danger' : (sensores.fase() === 'evaluando_inmovilidad' ? 'warning' : ((sensores.giroscopioActivo() || sensores.gpsActivo()) ? 'success' : 'medium'))">
         </ion-icon>
-        <div>
-          <h2>{{ (sensores.giroscopioActivo() || sensores.gpsActivo()) ? 'Protección Activa' : 'Protección en Espera' }}</h2>
-          <p>{{ sensores.mensajeEstado() }}</p>
+        <div class="banner-info">
+          <div class="banner-top">
+            <h2>{{ sensores.etiquetaFase() }}</h2>
+          </div>
+          <p>{{ sensores.ultimoDiagnostico() }}</p>
         </div>
       </ion-card-content>
     </ion-card>
@@ -36,13 +42,13 @@
       </ion-card>
     }
 
-    <!-- Tarjeta 1: Giroscopio y monitoreo continuo -->
+    <!-- Tarjeta 1: Giroscopio y detector de caídas en 4 fases -->
     <ion-card class="sensor-card">
       <ion-card-header>
         <div class="header-row">
           <div>
-            <ion-card-title>Giroscopio y Movimiento</ion-card-title>
-            <ion-card-subtitle>Detecta inclinaciones bruscas o posibles caídas</ion-card-subtitle>
+            <ion-card-title>Detector Inteligente de Caídas</ion-card-title>
+            <ion-card-subtitle>Impacto + cambio de postura + inmovilidad (3.5s) + confirmación</ion-card-subtitle>
           </div>
           <ion-badge [color]="sensores.giroscopioActivo() ? 'success' : 'medium'">
             {{ sensores.giroscopioActivo() ? 'Activo' : 'Apagado' }}
@@ -94,10 +100,14 @@
             <span>Aceleración</span>
             <strong>{{ sensores.lectura().aceleracion }} m/s²</strong>
           </div>
+          <div class="reading-box wide-box">
+            <span>Velocidad de giro (Giroscopio)</span>
+            <strong>{{ sensores.lectura().rotacion }} °/s</strong>
+          </div>
         </div>
 
         <p class="reading-meta">
-          Última lectura: {{ sensores.lectura().fechaTexto }} · Eventos detectados: <strong>{{ sensores.eventosDetectadosSesion() }}</strong>
+          Última lectura: {{ sensores.lectura().fechaTexto }} · Alertas enviadas: <strong>{{ sensores.eventosDetectadosSesion() }}</strong>
         </p>
       </ion-card-content>
     </ion-card>
@@ -140,19 +150,19 @@
     <ion-card class="demo-card">
       <ion-card-header>
         <ion-card-title>Pruebas y Simulación (PC / Demo)</ion-card-title>
-        <ion-card-subtitle>Envía eventos de prueba a la cuenta del cuidador</ion-card-subtitle>
+        <ion-card-subtitle>Prueba la verificación "¿Estás bien?" y el filtro de falsas alarmas</ion-card-subtitle>
       </ion-card-header>
 
       <ion-card-content>
         <div class="demo-actions">
-          <ion-button expand="block" fill="outline" color="warning" (click)="simularMovimiento()">
-            <ion-icon slot="start" name="pulse-outline"></ion-icon>
-            Simular movimiento brusco (Giroscopio)
-          </ion-button>
-
           <ion-button expand="block" fill="outline" color="danger" (click)="simularCaida()">
             <ion-icon slot="start" name="alert-circle-outline"></ion-icon>
-            Simular caída (Giroscopio)
+            Simular caída (con aviso "¿Estás bien?")
+          </ion-button>
+
+          <ion-button expand="block" fill="outline" color="warning" (click)="simularMovimiento()">
+            <ion-icon slot="start" name="pulse-outline"></ion-icon>
+            Simular falsa alarma (descartada)
           </ion-button>
 
           <ion-button expand="block" fill="outline" color="primary" (click)="simularGPS()">

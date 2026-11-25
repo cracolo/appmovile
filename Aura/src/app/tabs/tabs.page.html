@@ -46,3 +46,44 @@
     }
   </ion-tab-bar>
 </ion-tabs>
+
+<!-- Overlay global de verificación "¿Estás bien?" para el Paciente -->
+@if (authService.isPaciente() && sensores.fase() === 'confirmando_usuario') {
+  <div class="fall-confirm-backdrop" role="alertdialog" aria-modal="true">
+    <div class="fall-confirm-card">
+      <ion-icon name="warning-outline" class="fall-icon"></ion-icon>
+      <h2>Posible caída detectada</h2>
+      <p class="fall-question">¿Estás bien?</p>
+
+      <div class="countdown-circle">
+        <span>{{ sensores.segundosConfirmacion() }}</span>
+        <small>seg</small>
+      </div>
+
+      <p class="fall-subtext">
+        Si no respondes, enviaremos una alerta automática a tu cuidador.
+      </p>
+      <p class="fall-metrics">{{ sensores.resumenConfirmacion() }}</p>
+
+      <div class="fall-actions">
+        <ion-button
+          expand="block"
+          size="large"
+          color="success"
+          (click)="estoyBien()">
+          <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+          Estoy bien (Cancelar)
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          size="large"
+          color="danger"
+          (click)="necesitoAyuda()">
+          <ion-icon slot="start" name="alert-circle-outline"></ion-icon>
+          Necesito ayuda ahora
+        </ion-button>
+      </div>
+    </div>
+  </div>
+}

@@ -34,6 +34,7 @@ export interface LecturaGiroscopio {
   beta: number;
   gamma: number;
   aceleracion: number;
+  rotacion: number;
   fechaTexto: string;
 }
 

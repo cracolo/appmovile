@@ -20,6 +20,14 @@
   &.activo {
     border-left-color: var(--ion-color-success);
   }
+
+  &.evaluando {
+    border-left-color: var(--ion-color-warning);
+  }
+
+  &.alerta {
+    border-left-color: var(--ion-color-danger);
+  }
 }
 
 .banner-content {
@@ -75,6 +83,10 @@
   border-radius: 10px;
   padding: 10px;
   text-align: center;
+
+  &.wide-box {
+    grid-column: span 2;
+  }
 
   span {
     display: block;

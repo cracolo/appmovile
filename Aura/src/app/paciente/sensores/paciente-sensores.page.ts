@@ -101,17 +101,13 @@ export class PacienteSensoresPage {
   async simularMovimiento() {
     await this.sensores.simularEventoGiroscopio('movimiento');
     await this.mostrarToast(
-      'Evento de movimiento brusco enviado a las alertas del cuidador.',
+      'Falsa alarma descartada automáticamente (sin notificar al cuidador).',
       'warning'
     );
   }
 
   async simularCaida() {
     await this.sensores.simularEventoGiroscopio('caida');
-    await this.mostrarToast(
-      '¡Alerta de caída enviada a la cuenta del cuidador!',
-      'danger'
-    );
   }
 
   async simularGPS() {

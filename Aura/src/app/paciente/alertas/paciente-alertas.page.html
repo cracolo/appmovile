@@ -13,11 +13,11 @@
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="alertas-container">
     <div class="sensor-live-bar">
-      <ion-badge [color]="sensores.giroscopioActivo() ? 'success' : 'medium'">
-        Giroscopio: {{ sensores.giroscopioActivo() ? 'Activo' : 'Apagado' }}
+      <ion-badge [color]="sensores.fase() === 'evaluando_inmovilidad' ? 'warning' : (sensores.giroscopioActivo() ? 'success' : 'medium')">
+        {{ sensores.etiquetaFase() }}
       </ion-badge>
       <span class="live-accel">
-        Acel: <strong>{{ sensores.lectura().aceleracion }} m/s²</strong>
+        <strong>{{ sensores.lectura().aceleracion }} m/s²</strong> · {{ sensores.lectura().rotacion }}°/s
       </span>
     </div>
 

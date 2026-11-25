@@ -7,6 +7,7 @@ import {
   IonIcon,
   IonLabel,
   IonBadge,
+  IonButton,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -16,9 +17,12 @@ import {
   callOutline,
   hardwareChipOutline,
   alertCircleOutline,
+  warningOutline,
+  checkmarkCircleOutline,
 } from 'ionicons/icons';
 import { AuthService } from '../services/auth';
 import { AuraDataService } from '../services/aura-data.service';
+import { PacienteSensoresService } from '../services/paciente-sensores.service';
 
 @Component({
   selector: 'app-tabs',
@@ -33,12 +37,14 @@ import { AuraDataService } from '../services/aura-data.service';
     IonIcon,
     IonLabel,
     IonBadge,
+    IonButton,
   ],
 })
 export class TabsPage {
   constructor(
     public authService: AuthService,
-    public auraData: AuraDataService
+    public auraData: AuraDataService,
+    public sensores: PacienteSensoresService
   ) {
     addIcons({
       shieldCheckmarkOutline,
@@ -47,6 +53,16 @@ export class TabsPage {
       callOutline,
       hardwareChipOutline,
       alertCircleOutline,
+      warningOutline,
+      checkmarkCircleOutline,
     });
+  }
+
+  estoyBien() {
+    this.sensores.cancelarAlertaPaciente();
+  }
+
+  async necesitoAyuda() {
+    await this.sensores.confirmarYEnviarCaida(true);
   }
 }
