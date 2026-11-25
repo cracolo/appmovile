@@ -38,6 +38,13 @@
   border-radius: 14px;
 }
 
+.status-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
 .intro-text {
   margin: 0 0 10px;
   line-height: 1.5;

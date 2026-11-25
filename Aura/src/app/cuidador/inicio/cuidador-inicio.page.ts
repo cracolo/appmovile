@@ -16,6 +16,7 @@ import {
   IonList,
   IonItem,
   IonLabel,
+  IonBadge,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -50,6 +51,7 @@ import { AuraDataService } from '../../services/aura-data.service';
     IonList,
     IonItem,
     IonLabel,
+    IonBadge,
   ],
 })
 export class CuidadorInicioPage {

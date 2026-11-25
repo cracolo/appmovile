@@ -59,7 +59,12 @@
     <!-- Resumen rápido del estado actual del paciente -->
     <ion-card class="status-card">
       <ion-card-header>
-        <ion-card-title>Estado del Paciente</ion-card-title>
+        <div class="status-header-row">
+          <ion-card-title>Estado del Paciente</ion-card-title>
+          <ion-badge [color]="auraData.nubeConectada() ? 'success' : 'medium'">
+            {{ auraData.nubeConectada() ? 'Firebase en vivo' : 'Modo local' }}
+          </ion-badge>
+        </div>
       </ion-card-header>
       <ion-card-content>
         <div class="status-grid">
