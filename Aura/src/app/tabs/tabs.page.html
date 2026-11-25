@@ -31,6 +31,14 @@
         <ion-label>Sensores</ion-label>
       </ion-tab-button>
 
+      <ion-tab-button tab="paciente-alertas">
+        <ion-icon name="notifications-outline"></ion-icon>
+        <ion-label>Alertas</ion-label>
+        @if (auraData.alertasSinLeer() > 0) {
+          <ion-badge color="danger">{{ auraData.alertasSinLeer() }}</ion-badge>
+        }
+      </ion-tab-button>
+
       <ion-tab-button tab="paciente-panico">
         <ion-icon name="alert-circle-outline"></ion-icon>
         <ion-label>Pánico</ion-label>

@@ -52,6 +52,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'paciente-alertas',
+        canActivate: [roleGuard('paciente')],
+        loadComponent: () =>
+          import('../paciente/alertas/paciente-alertas.page').then(
+            (m) => m.PacienteAlertasPage
+          ),
+      },
+      {
         path: 'paciente-panico',
         canActivate: [roleGuard('paciente')],
         loadComponent: () =>
