@@ -38,17 +38,18 @@ export class PacienteSensoresService {
   private ultimoEventoMs = 0;
   private candidatoActual: CandidatoCaida | null = null;
 
-  // Parámetros de detección pasiva en 4 fases (impacto + postura + inmovilidad)
+  // Parámetros robustos de detección pasiva en 4 fases (impacto real + postura + inmovilidad)
   private readonly COOLDOWN_EVENTO_MS = 8000;
-  private readonly UMBRAL_CAIDA_LIBRE_MS2 = 5.8;
-  private readonly VENTANA_CAIDA_LIBRE_MS = 900;
-  private readonly UMBRAL_IMPACTO_ACEL_MS2 = 22;
-  private readonly UMBRAL_IMPACTO_COMBINADO_ACEL = 18;
-  private readonly UMBRAL_IMPACTO_COMBINADO_ROT = 150;
-  private readonly UMBRAL_IMPACTO_ROT_SOLA = 220;
+  private readonly UMBRAL_CAIDA_LIBRE_MS2 = 6.5;
+  private readonly VENTANA_CAIDA_LIBRE_MS = 1000;
+  private readonly UMBRAL_IMPACTO_CON_CAIDA_ACEL = 24;
+  private readonly UMBRAL_IMPACTO_CON_CAIDA_ROT = 120;
+  private readonly UMBRAL_IMPACTO_SECO_ACEL = 30;
+  private readonly UMBRAL_IMPACTO_SECO_ROT = 160;
   private readonly REBOTE_INICIAL_MS = 600;
-  private readonly VENTANA_INMOVILIDAD_MS = 3500;
-  private readonly UMBRAL_CAMBIO_ANGULO_DEG = 40;
+  private readonly VENTANA_INMOVILIDAD_MS = 4000;
+  private readonly UMBRAL_CAMBIO_ANGULO_DEG = 45;
+  private readonly UMBRAL_TROPIEZO_ACEL = 28;
 
   private _giroscopioActivo = signal(false);
   private _gpsActivo = signal(false);
@@ -171,7 +172,7 @@ export class PacienteSensoresService {
     const ahora = Date.now();
 
     if (!this.candidatoActual) {
-      // Fase 1: Caída libre breve (< 5.8 m/s²)
+      // Fase 1: Caída libre breve (< 6.5 m/s²)
       if (magnitud <= this.UMBRAL_CAIDA_LIBRE_MS2) {
         this.ultimaCaidaLibreMs = ahora;
       }
@@ -180,20 +181,26 @@ export class PacienteSensoresService {
         return;
       }
 
-      // Fase 2: Impacto fuerte o impacto + rotación brusca
-      const impactoFuerte =
-        magnitud >= this.UMBRAL_IMPACTO_ACEL_MS2 ||
-        (magnitud >= this.UMBRAL_IMPACTO_COMBINADO_ACEL &&
-          picoRotacion >= this.UMBRAL_IMPACTO_COMBINADO_ROT) ||
-        picoRotacion >= this.UMBRAL_IMPACTO_ROT_SOLA;
+      // Fase 2: Exigir SIEMPRE impacto físico real (nunca solo giroscopio)
+      const tuvoCaidaReciente =
+        ahora - this.ultimaCaidaLibreMs <= this.VENTANA_CAIDA_LIBRE_MS;
 
-      if (impactoFuerte) {
+      const viaCaidaClasica =
+        tuvoCaidaReciente &&
+        magnitud >= this.UMBRAL_IMPACTO_CON_CAIDA_ACEL &&
+        picoRotacion >= this.UMBRAL_IMPACTO_CON_CAIDA_ROT;
+
+      const viaImpactoSeco =
+        magnitud >= this.UMBRAL_IMPACTO_SECO_ACEL &&
+        picoRotacion >= this.UMBRAL_IMPACTO_SECO_ROT;
+
+      if (viaCaidaClasica || viaImpactoSeco) {
         this.iniciarEvaluacionPostImpacto(magnitud, picoRotacion);
       }
       return;
     }
 
-    // Fase 4: Evaluar quietud durante 3.5s tras el impacto
+    // Fase 4: Evaluar quietud estricta durante 4s tras el impacto
     const transcurrido = ahora - this.candidatoActual.inicioMs;
 
     if (transcurrido <= this.REBOTE_INICIAL_MS) {
@@ -207,7 +214,7 @@ export class PacienteSensoresService {
     }
 
     const enMovimiento =
-      magnitud > 14.5 || magnitud < 6.0 || picoRotacion > 90;
+      magnitud > 12.5 || magnitud < 7.5 || picoRotacion > 60;
 
     if (enMovimiento) {
       this.candidatoActual.muestrasMovimientoPost += 1;
@@ -250,8 +257,8 @@ export class PacienteSensoresService {
 
     if (!candidato) return;
 
-    // Si el golpe fue muy fuerte pero siguió moviéndose, avisar como Tropiezo leve
-    if (candidato.picoAceleracion >= 26) {
+    // Si el golpe fue muy fuerte pero siguió moviéndose, avisar como Tropiezo
+    if (candidato.picoAceleracion >= this.UMBRAL_TROPIEZO_ACEL) {
       await this.auraData.registrarAlerta({
         tipoAlerta: 'Tropiezo',
         origen: 'Sensor de movimiento del paciente',
@@ -269,6 +276,18 @@ export class PacienteSensoresService {
 
     if (!candidato) return;
 
+    // Filtro anti-"levantar celular de la mesa": plano horizontal -> ángulo de lectura
+    const estabaEnMesa =
+      Math.abs(candidato.betaPre) < 20 && Math.abs(candidato.gammaPre) < 20;
+    const quedoEnLectura =
+      this.ultimaOrientacion.beta >= 25 &&
+      this.ultimaOrientacion.beta <= 85 &&
+      Math.abs(this.ultimaOrientacion.gamma) < 45;
+
+    if (estabaEnMesa && quedoEnLectura) {
+      return;
+    }
+
     // Fase 3: Verificar cambio de postura (pre-impacto vs quietud post-impacto)
     const diffBeta = this.diferenciaAngular(
       candidato.betaPre,
@@ -283,7 +302,7 @@ export class PacienteSensoresService {
     const cumpleCriterioCaida =
       cambioAngulo >= this.UMBRAL_CAMBIO_ANGULO_DEG ||
       candidato.tuvoCaidaLibre ||
-      candidato.picoAceleracion >= 28;
+      candidato.picoAceleracion >= 32;
 
     if (!cumpleCriterioCaida) {
       return;
