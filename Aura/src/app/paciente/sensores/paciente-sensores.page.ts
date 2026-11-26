@@ -19,7 +19,6 @@ import {
   IonLabel,
   IonToggle,
   IonText,
-  ToastController,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -30,9 +29,9 @@ import {
   stopCircleOutline,
   lockClosedOutline,
   locationOutline,
-  pulseOutline,
-  alertCircleOutline,
-  navigateOutline,
+  cloudDoneOutline,
+  cloudOfflineOutline,
+  checkmarkCircleOutline,
 } from 'ionicons/icons';
 import { AuthService } from '../../services/auth';
 import { AuraDataService } from '../../services/aura-data.service';
@@ -69,7 +68,6 @@ export class PacienteSensoresPage {
     private authService: AuthService,
     public auraData: AuraDataService,
     public sensores: PacienteSensoresService,
-    private toastController: ToastController,
     private router: Router
   ) {
     addIcons({
@@ -80,9 +78,9 @@ export class PacienteSensoresPage {
       stopCircleOutline,
       lockClosedOutline,
       locationOutline,
-      pulseOutline,
-      alertCircleOutline,
-      navigateOutline,
+      cloudDoneOutline,
+      cloudOfflineOutline,
+      checkmarkCircleOutline,
     });
   }
 
@@ -96,36 +94,6 @@ export class PacienteSensoresPage {
 
   async toggleModoContinuo() {
     await this.sensores.alternarModoContinuo();
-  }
-
-  async simularMovimiento() {
-    await this.sensores.simularEventoGiroscopio('movimiento');
-    await this.mostrarToast(
-      'Falsa alarma descartada automáticamente (sin notificar al cuidador).',
-      'warning'
-    );
-  }
-
-  async simularCaida() {
-    await this.sensores.simularEventoGiroscopio('caida');
-  }
-
-  async simularGPS() {
-    await this.sensores.simularUbicacionGPS();
-    await this.mostrarToast(
-      'Nueva ubicación enviada al mapa del cuidador.',
-      'primary'
-    );
-  }
-
-  private async mostrarToast(message: string, color: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: 2400,
-      position: 'bottom',
-      color,
-    });
-    await toast.present();
   }
 
   async cerrarSesion() {

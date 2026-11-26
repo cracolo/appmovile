@@ -1,5 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import {
   collection,
   doc,
@@ -39,109 +40,42 @@ export interface UbicacionPaciente {
   lat: number;
   lng: number;
   precisionMetros: number;
-  fuente: 'gps' | 'simulada' | 'demo';
+  fuente: 'gps';
   fechaTexto: string;
   referencia: string;
-}
-
-export interface LecturaGiroscopio {
-  alpha: number;
-  beta: number;
-  gamma: number;
-  aceleracion: number;
-  rotacion: number;
-  fechaTexto: string;
 }
 
 export interface EstadoSensoresPaciente {
   giroscopioActivo: boolean;
   gpsActivo: boolean;
   pantallaActiva: boolean;
-  ultimaLectura: LecturaGiroscopio | null;
 }
 
-const ALERTAS_KEY = 'aura_alertas_v1';
-const UBICACION_KEY = 'aura_ubicacion_paciente_v1';
-const SENSORES_KEY = 'aura_estado_sensores_v1';
+const ALERTAS_KEY = 'aura_alertas_v2';
+const UBICACION_KEY = 'aura_ubicacion_paciente_v2';
+const SENSORES_KEY = 'aura_estado_sensores_v2';
 
 const COLECCION_ALERTAS = 'alertas';
 const DOC_ESTADO_PACIENTE = 'principal';
 const COLECCION_ESTADO = 'estado_paciente';
 
-const ALERTAS_INICIALES: RegistroAlerta[] = [
-  {
-    id: 1,
-    docId: 'demo-1',
-    fechaISO: '2026-11-20T18:45:00',
-    fechaTexto: '20/11/2026 - 18:45 hrs',
-    origen: 'Giroscopio del celular',
-    detalle: 'Cambio brusco de inclinación seguido de inmovilidad breve.',
-    tipoAlerta: 'Caída',
-    severidad: 'critica',
-    leida: false,
-    createdAtMs: 1795124700000,
-  },
-  {
-    id: 2,
-    docId: 'demo-2',
-    fechaISO: '2026-11-20T14:20:00',
-    fechaTexto: '20/11/2026 - 14:20 hrs',
-    origen: 'Giroscopio del celular',
-    detalle: 'Rotación acelerada detectada mientras caminaba.',
-    tipoAlerta: 'Movimiento brusco',
-    severidad: 'media',
-    leida: false,
-    createdAtMs: 1795108800000,
-  },
-  {
-    id: 3,
-    docId: 'demo-3',
-    fechaISO: '2026-11-19T22:10:00',
-    fechaTexto: '19/11/2026 - 22:10 hrs',
-    origen: 'Botón de Pánico',
-    detalle: 'El paciente presionó asistencia rápida desde la app.',
-    tipoAlerta: 'Botón de Pánico',
-    severidad: 'critica',
-    leida: true,
-    createdAtMs: 1795050600000,
-  },
-  {
-    id: 4,
-    docId: 'demo-4',
-    fechaISO: '2026-11-18T17:05:00',
-    fechaTexto: '18/11/2026 - 17:05 hrs',
-    origen: 'Giroscopio del celular',
-    detalle: 'Sacudida moderada registrada por el sensor de movimiento.',
-    tipoAlerta: 'Tropiezo',
-    severidad: 'media',
-    leida: true,
-    createdAtMs: 1794945900000,
-  },
-];
-
-const UBICACION_DEMO: UbicacionPaciente = {
-  lat: -33.4489,
-  lng: -70.6693,
-  precisionMetros: 18,
-  fuente: 'demo',
-  fechaTexto: 'Ubicación de demostración (Santiago Centro)',
-  referencia: 'Última posición registrada del paciente',
-};
-
 @Injectable({ providedIn: 'root' })
 export class AuraDataService {
-  private _alertas = signal<RegistroAlerta[]>(ALERTAS_INICIALES);
-  private _ubicacion = signal<UbicacionPaciente>(UBICACION_DEMO);
+  private _alertas = signal<RegistroAlerta[]>([]);
+  private _ubicacion = signal<UbicacionPaciente | null>(null);
   private _estadoSensores = signal<EstadoSensoresPaciente>({
     giroscopioActivo: false,
     gpsActivo: false,
     pantallaActiva: false,
-    ultimaLectura: null,
   });
   private _nubeConectada = signal<boolean>(false);
   private _errorNube = signal<string>('');
+  private _alertaCriticaActiva = signal<RegistroAlerta | null>(null);
 
   private listenersIniciados = false;
+  private primeraCargaAlertas = true;
+  private alertasDescartadasEnModal = new Set<number>();
+  private audioCtx: AudioContext | null = null;
 
   readonly alertas = computed(() => this._alertas());
   readonly alertasSinLeer = computed(
@@ -151,6 +85,7 @@ export class AuraDataService {
   readonly estadoSensores = computed(() => this._estadoSensores());
   readonly nubeConectada = computed(() => this._nubeConectada());
   readonly errorNube = computed(() => this._errorNube());
+  readonly alertaCriticaActiva = computed(() => this._alertaCriticaActiva());
 
   constructor() {
     void this.cargarDatosPersistidos();
@@ -175,12 +110,6 @@ export class AuraDataService {
         this._nubeConectada.set(true);
         this._errorNube.set('');
 
-        if (snapshot.empty) {
-          // Si la colección en Firestore está vacía por primera vez, sembramos las 4 alertas demo
-          void this.sembrarAlertasDemoEnNube();
-          return;
-        }
-
         const lista: RegistroAlerta[] = snapshot.docs.map((d) => {
           const data = d.data() as RegistroAlerta;
           return {
@@ -194,11 +123,14 @@ export class AuraDataService {
           key: ALERTAS_KEY,
           value: JSON.stringify(lista),
         });
+
+        this.evaluarAlertaCriticaEntrante(lista);
+        this.primeraCargaAlertas = false;
       },
       (error) => {
         this._nubeConectada.set(false);
         this._errorNube.set(
-          `Sin conexión a Firestore (${error.code || 'offline'}). Usando respaldo local.`
+          `Sin conexión al servidor (${error.code || 'offline'}).`
         );
       }
     );
@@ -214,7 +146,7 @@ export class AuraDataService {
         if (!snap.exists()) return;
 
         const data = snap.data() as {
-          ubicacion?: UbicacionPaciente;
+          ubicacion?: UbicacionPaciente | null;
           sensores?: EstadoSensoresPaciente;
         };
 
@@ -241,22 +173,102 @@ export class AuraDataService {
       (error) => {
         this._nubeConectada.set(false);
         this._errorNube.set(
-          `Sin conexión a Firestore (${error.code || 'offline'}). Usando respaldo local.`
+          `Sin conexión al servidor (${error.code || 'offline'}).`
         );
       }
     );
   }
 
-  private async sembrarAlertasDemoEnNube(): Promise<void> {
-    try {
-      const batch = writeBatch(firestoreDb);
-      for (const alerta of ALERTAS_INICIALES) {
-        const docId = alerta.docId ?? `demo-${alerta.id}`;
-        batch.set(doc(firestoreDb, COLECCION_ALERTAS, docId), alerta);
+  /** Detecta alertas críticas recientes sin leer para mostrar el aviso a pantalla completa al cuidador */
+  private evaluarAlertaCriticaEntrante(lista: RegistroAlerta[]): void {
+    const ahora = Date.now();
+    const ventanaRecienteMs = 2 * 60 * 1000; // 2 minutos en primera carga
+
+    const criticaPendiente = lista.find((a) => {
+      if (a.severidad !== 'critica' || a.leida) return false;
+      if (this.alertasDescartadasEnModal.has(a.id)) return false;
+
+      if (this.primeraCargaAlertas) {
+        const ts = a.createdAtMs ?? a.id;
+        return ahora - ts <= ventanaRecienteMs;
       }
-      await batch.commit();
+      return true;
+    });
+
+    const actual = this._alertaCriticaActiva();
+
+    if (criticaPendiente) {
+      if (!actual || actual.id !== criticaPendiente.id) {
+        this._alertaCriticaActiva.set(criticaPendiente);
+      }
+    } else if (actual) {
+      // Si se marcó como leída o se limpió desde otro dispositivo, cerrar el aviso
+      const siguePendiente = lista.some(
+        (a) => a.id === actual.id && !a.leida
+      );
+      if (!siguePendiente) {
+        this._alertaCriticaActiva.set(null);
+      }
+    }
+  }
+
+  /** Sonido y vibración de aviso para el cuidador cuando aparece el overlay crítico */
+  async notificarCuidadorAlertaCritica(): Promise<void> {
+    try {
+      await Haptics.vibrate({ duration: 500 });
     } catch {
-      // Si no hay conexión aún, mantiene las locales
+      try {
+        await Haptics.impact({ style: ImpactStyle.Heavy });
+      } catch {
+        // Sin vibración en PC
+      }
+    }
+
+    try {
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext })
+          .webkitAudioContext;
+      if (!AudioCtx) return;
+
+      if (!this.audioCtx) {
+        this.audioCtx = new AudioCtx();
+      }
+      if (this.audioCtx.state === 'suspended') {
+        await this.audioCtx.resume();
+      }
+
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, this.audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.001, this.audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(
+        0.22,
+        this.audioCtx.currentTime + 0.03
+      );
+      gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        this.audioCtx.currentTime + 0.45
+      );
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.46);
+    } catch {
+      // Ignorar si el navegador bloquea autoplay de audio
+    }
+  }
+
+  async cerrarAlertaCriticaActiva(marcarLeida = true): Promise<void> {
+    const alerta = this._alertaCriticaActiva();
+    if (!alerta) return;
+
+    this.alertasDescartadasEnModal.add(alerta.id);
+    this._alertaCriticaActiva.set(null);
+
+    if (marcarLeida) {
+      await this.marcarAlertaLeida(alerta);
     }
   }
 
@@ -274,11 +286,11 @@ export class AuraDataService {
     if (alertasRaw && !this._nubeConectada()) {
       try {
         const parsed = JSON.parse(alertasRaw) as RegistroAlerta[];
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           this._alertas.set(parsed);
         }
       } catch {
-        // Mantiene alertas iniciales
+        // Ignorar JSON inválido
       }
     }
 
@@ -289,7 +301,7 @@ export class AuraDataService {
           this._ubicacion.set(parsed);
         }
       } catch {
-        // Mantiene ubicación demo
+        // Ignorar JSON inválido
       }
     }
 
@@ -298,7 +310,7 @@ export class AuraDataService {
         const parsed = JSON.parse(sensoresRaw) as EstadoSensoresPaciente;
         this._estadoSensores.set(parsed);
       } catch {
-        // Mantiene estado inicial
+        // Ignorar JSON inválido
       }
     }
   }
@@ -326,7 +338,6 @@ export class AuraDataService {
       createdAtMs: nowMs,
     };
 
-    // Actualización local inmediata
     const actualizadas = [nueva, ...this._alertas()];
     this._alertas.set(actualizadas);
     await Preferences.set({
@@ -334,7 +345,6 @@ export class AuraDataService {
       value: JSON.stringify(actualizadas),
     });
 
-    // Publicar en Firestore para el cuidador en tiempo real
     try {
       await setDoc(doc(firestoreDb, COLECCION_ALERTAS, docId), nueva);
     } catch {
@@ -344,8 +354,41 @@ export class AuraDataService {
     return nueva;
   }
 
+  async marcarAlertaLeida(alerta: RegistroAlerta): Promise<void> {
+    if (alerta.leida) return;
+
+    this.alertasDescartadasEnModal.add(alerta.id);
+    if (this._alertaCriticaActiva()?.id === alerta.id) {
+      this._alertaCriticaActiva.set(null);
+    }
+
+    const actualizadas = this._alertas().map((a) =>
+      a.id === alerta.id ? { ...a, leida: true } : a
+    );
+    this._alertas.set(actualizadas);
+    await Preferences.set({
+      key: ALERTAS_KEY,
+      value: JSON.stringify(actualizadas),
+    });
+
+    if (alerta.docId) {
+      try {
+        await updateDoc(doc(firestoreDb, COLECCION_ALERTAS, alerta.docId), {
+          leida: true,
+        });
+      } catch {
+        // Ignorar si está offline
+      }
+    }
+  }
+
   async marcarTodasLeidas(): Promise<void> {
     const noLeidas = this._alertas().filter((a) => !a.leida);
+    for (const a of noLeidas) {
+      this.alertasDescartadasEnModal.add(a.id);
+    }
+    this._alertaCriticaActiva.set(null);
+
     const actualizadas = this._alertas().map((a) => ({ ...a, leida: true }));
     this._alertas.set(actualizadas);
     await Preferences.set({
@@ -368,22 +411,20 @@ export class AuraDataService {
     }
   }
 
-  async restablecerAlertasDemo(): Promise<void> {
-    this._alertas.set([...ALERTAS_INICIALES]);
-    await Preferences.set({
-      key: ALERTAS_KEY,
-      value: JSON.stringify(ALERTAS_INICIALES),
-    });
+  /** Borra todas las alertas de Firestore y locales para limpiar el dashboard */
+  async limpiarTodasLasAlertas(): Promise<void> {
+    this._alertas.set([]);
+    this._alertaCriticaActiva.set(null);
+    this.alertasDescartadasEnModal.clear();
+    await Preferences.remove({ key: ALERTAS_KEY });
 
     try {
       const snap = await getDocs(collection(firestoreDb, COLECCION_ALERTAS));
-      const batch = writeBatch(firestoreDb);
-      snap.forEach((d) => batch.delete(d.ref));
-      for (const alerta of ALERTAS_INICIALES) {
-        const docId = alerta.docId ?? `demo-${alerta.id}`;
-        batch.set(doc(firestoreDb, COLECCION_ALERTAS, docId), alerta);
+      if (!snap.empty) {
+        const batch = writeBatch(firestoreDb);
+        snap.forEach((d) => batch.delete(d.ref));
+        await batch.commit();
       }
-      await batch.commit();
     } catch {
       // Ignorar si está offline
     }
@@ -392,19 +433,15 @@ export class AuraDataService {
   async actualizarUbicacion(
     lat: number,
     lng: number,
-    precisionMetros: number,
-    fuente: 'gps' | 'simulada'
+    precisionMetros: number
   ): Promise<void> {
     const nueva: UbicacionPaciente = {
       lat,
       lng,
       precisionMetros: Math.round(precisionMetros),
-      fuente,
+      fuente: 'gps',
       fechaTexto: this.formatearFecha(new Date()),
-      referencia:
-        fuente === 'gps'
-          ? 'GPS en vivo del celular del paciente'
-          : 'Ubicación simulada para demostración',
+      referencia: 'GPS en vivo del celular del paciente',
     };
 
     this._ubicacion.set(nueva);

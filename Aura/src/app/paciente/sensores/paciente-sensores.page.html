@@ -12,22 +12,29 @@
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="paciente-container">
-    <!-- Estado general y fase de la máquina de estados -->
+    <!-- Indicador de conexión al servidor -->
+    <div class="server-bar">
+      <ion-badge [color]="auraData.nubeConectada() ? 'success' : 'medium'">
+        <ion-icon
+          [name]="auraData.nubeConectada() ? 'cloud-done-outline' : 'cloud-offline-outline'"
+          class="badge-icon">
+        </ion-icon>
+        {{ auraData.nubeConectada() ? 'Conectado al servidor' : 'Sin conexión al servidor' }}
+      </ion-badge>
+    </div>
+
+    <!-- Estado general amigable -->
     <ion-card
       class="status-banner"
-      [class.activo]="sensores.giroscopioActivo() || sensores.gpsActivo()"
-      [class.evaluando]="sensores.fase() === 'evaluando_inmovilidad'"
-      [class.alerta]="sensores.fase() === 'confirmando_usuario' || sensores.fase() === 'alerta_enviada'">
+      [class.activo]="sensores.giroscopioActivo() || sensores.gpsActivo()">
       <ion-card-content class="banner-content">
         <ion-icon
           [name]="(sensores.giroscopioActivo() || sensores.gpsActivo()) ? 'shield-checkmark-outline' : 'shield-outline'"
-          [color]="sensores.fase() === 'alerta_enviada' || sensores.fase() === 'confirmando_usuario' ? 'danger' : (sensores.fase() === 'evaluando_inmovilidad' ? 'warning' : ((sensores.giroscopioActivo() || sensores.gpsActivo()) ? 'success' : 'medium'))">
+          [color]="(sensores.giroscopioActivo() || sensores.gpsActivo()) ? 'success' : 'medium'">
         </ion-icon>
-        <div class="banner-info">
-          <div class="banner-top">
-            <h2>{{ sensores.etiquetaFase() }}</h2>
-          </div>
-          <p>{{ sensores.ultimoDiagnostico() }}</p>
+        <div>
+          <h2>{{ (sensores.giroscopioActivo() || sensores.gpsActivo()) ? 'Protección Activa' : 'Protección en Espera' }}</h2>
+          <p>{{ sensores.mensajeEstado() }}</p>
         </div>
       </ion-card-content>
     </ion-card>
@@ -42,13 +49,13 @@
       </ion-card>
     }
 
-    <!-- Tarjeta 1: Giroscopio y detector de caídas en 4 fases -->
+    <!-- Tarjeta 1: Detector de caídas (activación manual, sin datos técnicos) -->
     <ion-card class="sensor-card">
       <ion-card-header>
         <div class="header-row">
           <div>
-            <ion-card-title>Detector Inteligente de Caídas</ion-card-title>
-            <ion-card-subtitle>Impacto + cambio de postura + inmovilidad (3.5s) + confirmación</ion-card-subtitle>
+            <ion-card-title>Detector de Caídas</ion-card-title>
+            <ion-card-subtitle>Cuida de ti en silencio y avisa automáticamente a tu cuidador si ocurre una caída</ion-card-subtitle>
           </div>
           <ion-badge [color]="sensores.giroscopioActivo() ? 'success' : 'medium'">
             {{ sensores.giroscopioActivo() ? 'Activo' : 'Apagado' }}
@@ -66,14 +73,14 @@
             slot="start"
             [name]="sensores.giroscopioActivo() ? 'stop-circle-outline' : 'play-circle-outline'">
           </ion-icon>
-          {{ sensores.giroscopioActivo() ? 'Detener Giroscopio' : 'Activar Giroscopio' }}
+          {{ sensores.giroscopioActivo() ? 'Detener Detector de Caídas' : 'Activar Detector de Caídas' }}
         </ion-button>
 
         <ion-item lines="none" class="wake-item">
           <ion-icon slot="start" name="lock-closed-outline" color="secondary"></ion-icon>
           <ion-label class="ion-text-wrap">
             <h3>Mantener activo en segundo plano</h3>
-            <p>Prepara el monitoreo continuo incluso al bloquear el teléfono (WakeLock en web / Foreground Service en APK).</p>
+            <p>Ayuda a conservar el monitoreo continuo mientras llevas el celular contigo.</p>
           </ion-label>
           <ion-toggle
             slot="end"
@@ -81,44 +88,16 @@
             (ionChange)="toggleModoContinuo()">
           </ion-toggle>
         </ion-item>
-
-        <!-- Lecturas en vivo -->
-        <div class="readings-grid">
-          <div class="reading-box">
-            <span>Alpha (Z)</span>
-            <strong>{{ sensores.lectura().alpha }}°</strong>
-          </div>
-          <div class="reading-box">
-            <span>Beta (X)</span>
-            <strong>{{ sensores.lectura().beta }}°</strong>
-          </div>
-          <div class="reading-box">
-            <span>Gamma (Y)</span>
-            <strong>{{ sensores.lectura().gamma }}°</strong>
-          </div>
-          <div class="reading-box">
-            <span>Aceleración</span>
-            <strong>{{ sensores.lectura().aceleracion }} m/s²</strong>
-          </div>
-          <div class="reading-box wide-box">
-            <span>Velocidad de giro (Giroscopio)</span>
-            <strong>{{ sensores.lectura().rotacion }} °/s</strong>
-          </div>
-        </div>
-
-        <p class="reading-meta">
-          Última lectura: {{ sensores.lectura().fechaTexto }} · Alertas enviadas: <strong>{{ sensores.eventosDetectadosSesion() }}</strong>
-        </p>
       </ion-card-content>
     </ion-card>
 
-    <!-- Tarjeta 2: Geolocalización para el cuidador -->
+    <!-- Tarjeta 2: Geolocalización (activación manual) -->
     <ion-card class="sensor-card">
       <ion-card-header>
         <div class="header-row">
           <div>
-            <ion-card-title>Geolocalización (GPS)</ion-card-title>
-            <ion-card-subtitle>Comparte tu ubicación con el cuidador</ion-card-subtitle>
+            <ion-card-title>Ubicación para tu Cuidador</ion-card-title>
+            <ion-card-subtitle>Permite que tu cuidador sepa dónde estás en caso de emergencia</ion-card-subtitle>
           </div>
           <ion-badge [color]="sensores.gpsActivo() ? 'success' : 'medium'">
             {{ sensores.gpsActivo() ? 'Compartiendo' : 'Apagado' }}
@@ -133,42 +112,21 @@
           [color]="sensores.gpsActivo() ? 'danger' : 'secondary'"
           (click)="toggleGPS()">
           <ion-icon slot="start" name="location-outline"></ion-icon>
-          {{ sensores.gpsActivo() ? 'Detener Ubicación GPS' : 'Activar Ubicación GPS' }}
+          {{ sensores.gpsActivo() ? 'Detener Ubicación' : 'Activar Ubicación' }}
         </ion-button>
 
         <div class="gps-info">
-          <p>
-            <strong>Coordenadas actuales:</strong>
-            {{ auraData.ubicacion().lat.toFixed(5) }}, {{ auraData.ubicacion().lng.toFixed(5) }}
-          </p>
-          <p class="gps-meta">Actualizado: {{ auraData.ubicacion().fechaTexto }}</p>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Tarjeta 3: Simulación para demostración en PC / clase -->
-    <ion-card class="demo-card">
-      <ion-card-header>
-        <ion-card-title>Pruebas y Simulación (PC / Demo)</ion-card-title>
-        <ion-card-subtitle>Prueba la verificación "¿Estás bien?" y el filtro de falsas alarmas</ion-card-subtitle>
-      </ion-card-header>
-
-      <ion-card-content>
-        <div class="demo-actions">
-          <ion-button expand="block" fill="outline" color="danger" (click)="simularCaida()">
-            <ion-icon slot="start" name="alert-circle-outline"></ion-icon>
-            Simular caída (con aviso "¿Estás bien?")
-          </ion-button>
-
-          <ion-button expand="block" fill="outline" color="warning" (click)="simularMovimiento()">
-            <ion-icon slot="start" name="pulse-outline"></ion-icon>
-            Simular falsa alarma (descartada)
-          </ion-button>
-
-          <ion-button expand="block" fill="outline" color="primary" (click)="simularGPS()">
-            <ion-icon slot="start" name="navigate-outline"></ion-icon>
-            Simular actualización GPS
-          </ion-button>
+          @if (sensores.gpsActivo() && auraData.ubicacion(); as ub) {
+            <p class="gps-ok">
+              <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+              <span>Tu ubicación se está compartiendo en vivo con tu cuidador.</span>
+            </p>
+            <p class="gps-meta">Último envío: {{ ub.fechaTexto }}</p>
+          } @else if (sensores.gpsActivo()) {
+            <p class="gps-meta">Obteniendo señal GPS actual...</p>
+          } @else {
+            <p class="gps-meta">La ubicación está desactivada. Presiona el botón para compartirla.</p>
+          }
         </div>
       </ion-card-content>
     </ion-card>

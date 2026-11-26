@@ -31,9 +31,13 @@ import {
   timeOutline,
   mapOutline,
   locateOutline,
+  cloudDoneOutline,
+  cloudOfflineOutline,
 } from 'ionicons/icons';
 import { AuthService } from '../../services/auth';
 import { AuraDataService } from '../../services/aura-data.service';
+
+const DEFAULT_CENTER: L.LatLngTuple = [-33.4489, -70.6693];
 
 @Component({
   selector: 'app-cuidador-mapa',
@@ -77,15 +81,20 @@ export class CuidadorMapaPage implements OnDestroy {
       timeOutline,
       mapOutline,
       locateOutline,
+      cloudDoneOutline,
+      cloudOfflineOutline,
     });
 
+    // Reacciona automáticamente a cada actualización GPS recibida desde Firebase
     effect(() => {
       const ubicacion = this.auraData.ubicacion();
-      this.actualizarMarcador(
-        ubicacion.lat,
-        ubicacion.lng,
-        ubicacion.precisionMetros
-      );
+      if (ubicacion) {
+        this.actualizarMarcador(
+          ubicacion.lat,
+          ubicacion.lng,
+          ubicacion.precisionMetros
+        );
+      }
     });
   }
 
@@ -108,39 +117,24 @@ export class CuidadorMapaPage implements OnDestroy {
       return;
     }
 
-    const { lat, lng, precisionMetros } = this.auraData.ubicacion();
+    const ub = this.auraData.ubicacion();
+    const centro: L.LatLngTuple = ub ? [ub.lat, ub.lng] : DEFAULT_CENTER;
+    const zoomInicial = ub ? 16 : 12;
 
     if (!this.map) {
       this.map = L.map(this.mapContainer.nativeElement, {
-        center: [lat, lng],
-        zoom: 16,
+        center: centro,
+        zoom: zoomInicial,
       });
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap',
         maxZoom: 19,
       }).addTo(this.map);
+    }
 
-      const patientIcon = L.divIcon({
-        className: 'aura-patient-marker',
-        html: '<div class="marker-pin"></div>',
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
-      });
-
-      this.marker = L.marker([lat, lng], { icon: patientIcon })
-        .addTo(this.map)
-        .bindPopup('<strong>Paciente AURA</strong><br>Ubicación actual')
-        .openPopup();
-
-      this.accuracyCircle = L.circle([lat, lng], {
-        radius: Math.max(precisionMetros, 15),
-        color: '#0284c7',
-        fillColor: '#38bdf8',
-        fillOpacity: 0.2,
-      }).addTo(this.map);
-    } else {
-      this.actualizarMarcador(lat, lng, precisionMetros);
+    if (ub) {
+      this.actualizarMarcador(ub.lat, ub.lng, ub.precisionMetros);
     }
   }
 
@@ -149,26 +143,55 @@ export class CuidadorMapaPage implements OnDestroy {
     lng: number,
     precisionMetros: number
   ) {
-    if (!this.map || !this.marker || !this.accuracyCircle) {
+    if (!this.map) {
       return;
     }
+
     const coords: L.LatLngExpression = [lat, lng];
-    this.marker.setLatLng(coords);
-    this.accuracyCircle.setLatLng(coords);
-    this.accuracyCircle.setRadius(Math.max(precisionMetros, 15));
-    this.map.setView(coords, this.map.getZoom());
+
+    if (!this.marker) {
+      const patientIcon = L.divIcon({
+        className: 'aura-patient-marker',
+        html: '<div class="marker-pin"></div>',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      });
+
+      this.marker = L.marker(coords, { icon: patientIcon })
+        .addTo(this.map)
+        .bindPopup('<strong>Paciente AURA</strong><br>Ubicación en vivo')
+        .openPopup();
+    } else {
+      this.marker.setLatLng(coords);
+    }
+
+    if (!this.accuracyCircle) {
+      this.accuracyCircle = L.circle(coords, {
+        radius: Math.max(precisionMetros, 15),
+        color: '#0284c7',
+        fillColor: '#38bdf8',
+        fillOpacity: 0.2,
+      }).addTo(this.map);
+    } else {
+      this.accuracyCircle.setLatLng(coords);
+      this.accuracyCircle.setRadius(Math.max(precisionMetros, 15));
+    }
+
+    this.map.setView(coords, Math.max(this.map.getZoom(), 16));
   }
 
-  async centrarEnPaciente() {
-    await this.auraData.cargarDatosPersistidos();
-    const { lat, lng, precisionMetros } = this.auraData.ubicacion();
-    this.actualizarMarcador(lat, lng, precisionMetros);
+  centrarEnPaciente() {
+    const ub = this.auraData.ubicacion();
+    if (ub) {
+      this.actualizarMarcador(ub.lat, ub.lng, ub.precisionMetros);
+    }
     this.map?.invalidateSize();
   }
 
   abrirEnGoogleMaps() {
-    const { lat, lng } = this.auraData.ubicacion();
-    const url = `https://www.google.com/maps?q=${lat},${lng}`;
+    const ub = this.auraData.ubicacion();
+    if (!ub) return;
+    const url = `https://www.google.com/maps?q=${ub.lat},${ub.lng}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 

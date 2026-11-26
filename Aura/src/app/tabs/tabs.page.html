@@ -47,41 +47,57 @@
   </ion-tab-bar>
 </ion-tabs>
 
-<!-- Overlay global de verificación "¿Estás bien?" para el Paciente -->
-@if (authService.isPaciente() && sensores.fase() === 'confirmando_usuario') {
-  <div class="fall-confirm-backdrop" role="alertdialog" aria-modal="true">
-    <div class="fall-confirm-card">
-      <ion-icon name="warning-outline" class="fall-icon"></ion-icon>
-      <h2>Posible caída detectada</h2>
-      <p class="fall-question">¿Estás bien?</p>
-
-      <div class="countdown-circle">
-        <span>{{ sensores.segundosConfirmacion() }}</span>
-        <small>seg</small>
+<!-- Overlay global de alerta crítica a pantalla completa SOLO para el Cuidador -->
+@if (authService.isCuidador() && auraData.alertaCriticaActiva(); as alerta) {
+  <div class="caregiver-alert-backdrop" role="alertdialog" aria-modal="true">
+    <div class="caregiver-alert-card">
+      <div class="alert-pulse-badge">
+        <ion-icon name="warning-outline"></ion-icon>
       </div>
 
-      <p class="fall-subtext">
-        Si no respondes, enviaremos una alerta automática a tu cuidador.
-      </p>
-      <p class="fall-metrics">{{ sensores.resumenConfirmacion() }}</p>
+      <h2>¡Alerta de {{ alerta.tipoAlerta }}!</h2>
+      <p class="alert-time">{{ alerta.fechaTexto }}</p>
 
-      <div class="fall-actions">
+      <div class="alert-detail-box">
+        <p class="alert-origin"><strong>{{ alerta.origen }}</strong></p>
+        <p class="alert-detail">{{ alerta.detalle }}</p>
+      </div>
+
+      <div class="alert-actions">
         <ion-button
           expand="block"
           size="large"
-          color="success"
-          (click)="estoyBien()">
-          <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
-          Estoy bien (Cancelar)
+          color="primary"
+          (click)="llamarPaciente()">
+          <ion-icon slot="start" name="call-outline"></ion-icon>
+          Llamar al Paciente
         </ion-button>
 
         <ion-button
           expand="block"
           size="large"
           color="danger"
-          (click)="necesitoAyuda()">
-          <ion-icon slot="start" name="alert-circle-outline"></ion-icon>
-          Necesito ayuda ahora
+          (click)="llamarEmergencias()">
+          <ion-icon slot="start" name="medkit-outline"></ion-icon>
+          Llamar a Emergencias (131)
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          fill="outline"
+          color="secondary"
+          (click)="verEnMapa()">
+          <ion-icon slot="start" name="map-outline"></ion-icon>
+          Ver ubicación en el mapa
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          fill="clear"
+          color="medium"
+          (click)="marcarLeidaYCerrar()">
+          <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+          Marcar como leída y cerrar
         </ion-button>
       </div>
     </div>

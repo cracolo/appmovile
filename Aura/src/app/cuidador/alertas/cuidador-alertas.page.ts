@@ -18,19 +18,25 @@ import {
   IonItem,
   IonLabel,
   IonBadge,
+  AlertController,
+  ToastController,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   logOutOutline,
   checkmarkDoneOutline,
-  refreshOutline,
+  checkmarkOutline,
+  trashOutline,
   alertCircleOutline,
   warningOutline,
   hardwareChipOutline,
   calendarOutline,
+  cloudDoneOutline,
+  cloudOfflineOutline,
+  shieldCheckmarkOutline,
 } from 'ionicons/icons';
 import { AuthService } from '../../services/auth';
-import { AuraDataService } from '../../services/aura-data.service';
+import { AuraDataService, RegistroAlerta } from '../../services/aura-data.service';
 
 @Component({
   selector: 'app-cuidador-alertas',
@@ -61,16 +67,22 @@ export class CuidadorAlertasPage {
   constructor(
     private authService: AuthService,
     public auraData: AuraDataService,
+    private alertController: AlertController,
+    private toastController: ToastController,
     private router: Router
   ) {
     addIcons({
       logOutOutline,
       checkmarkDoneOutline,
-      refreshOutline,
+      checkmarkOutline,
+      trashOutline,
       alertCircleOutline,
       warningOutline,
       hardwareChipOutline,
       calendarOutline,
+      cloudDoneOutline,
+      cloudOfflineOutline,
+      shieldCheckmarkOutline,
     });
   }
 
@@ -78,12 +90,45 @@ export class CuidadorAlertasPage {
     void this.auraData.cargarDatosPersistidos();
   }
 
-  async marcarLeidas() {
+  async marcarUnaLeida(alerta: RegistroAlerta) {
+    await this.auraData.marcarAlertaLeida(alerta);
+  }
+
+  async marcarTodasLeidas() {
     await this.auraData.marcarTodasLeidas();
   }
 
-  async restablecerDemo() {
-    await this.auraData.restablecerAlertasDemo();
+  async confirmarLimpiarAlertas() {
+    const alert = await this.alertController.create({
+      header: 'Restablecer alertas',
+      message:
+        'Se eliminarán todas las alertas registradas para limpiar el dashboard. ¿Deseas continuar?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Borrar todas',
+          role: 'destructive',
+          handler: () => {
+            void this.limpiarAlertas();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  private async limpiarAlertas() {
+    await this.auraData.limpiarTodasLasAlertas();
+    const toast = await this.toastController.create({
+      message: 'Dashboard de alertas limpiado.',
+      duration: 2200,
+      position: 'bottom',
+      color: 'success',
+    });
+    await toast.present();
   }
 
   async cerrarSesion() {

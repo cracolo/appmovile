@@ -62,7 +62,7 @@
         <div class="status-header-row">
           <ion-card-title>Estado del Paciente</ion-card-title>
           <ion-badge [color]="auraData.nubeConectada() ? 'success' : 'medium'">
-            {{ auraData.nubeConectada() ? 'Firebase en vivo' : 'Modo local' }}
+            {{ auraData.nubeConectada() ? 'Conectado al servidor' : 'Sin conexión' }}
           </ion-badge>
         </div>
       </ion-card-header>
@@ -82,7 +82,7 @@
               [color]="auraData.estadoSensores().giroscopioActivo ? 'success' : 'medium'">
             </ion-icon>
             <div>
-              <strong>Giroscopio</strong>
+              <strong>Caídas</strong>
               <span>{{ auraData.estadoSensores().giroscopioActivo ? 'Activo' : 'En espera' }}</span>
             </div>
           </div>
@@ -90,11 +90,11 @@
           <div class="status-chip">
             <ion-icon
               name="location-outline"
-              [color]="auraData.estadoSensores().gpsActivo ? 'success' : 'primary'">
+              [color]="auraData.estadoSensores().gpsActivo ? 'success' : (auraData.ubicacion() ? 'primary' : 'medium')">
             </ion-icon>
             <div>
               <strong>GPS</strong>
-              <span>{{ auraData.estadoSensores().gpsActivo ? 'En vivo' : 'Última pos.' }}</span>
+              <span>{{ auraData.estadoSensores().gpsActivo ? 'En vivo' : (auraData.ubicacion() ? 'Última pos.' : 'Sin señal') }}</span>
             </div>
           </div>
         </div>

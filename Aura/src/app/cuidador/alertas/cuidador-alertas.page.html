@@ -12,24 +12,35 @@
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="alertas-container">
+    <div class="server-bar">
+      <ion-badge [color]="auraData.nubeConectada() ? 'success' : 'medium'">
+        <ion-icon
+          [name]="auraData.nubeConectada() ? 'cloud-done-outline' : 'cloud-offline-outline'"
+          class="badge-icon">
+        </ion-icon>
+        {{ auraData.nubeConectada() ? 'Conectado al servidor' : 'Sin conexión al servidor' }}
+      </ion-badge>
+    </div>
+
     <div class="actions-bar">
       <ion-button
         size="small"
         fill="outline"
         color="primary"
         [disabled]="auraData.alertasSinLeer() === 0"
-        (click)="marcarLeidas()">
+        (click)="marcarTodasLeidas()">
         <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
         Marcar leídas
       </ion-button>
 
       <ion-button
         size="small"
-        fill="clear"
-        color="medium"
-        (click)="restablecerDemo()">
-        <ion-icon slot="start" name="refresh-outline"></ion-icon>
-        Restablecer demo
+        fill="outline"
+        color="danger"
+        [disabled]="auraData.alertas().length === 0"
+        (click)="confirmarLimpiarAlertas()">
+        <ion-icon slot="start" name="trash-outline"></ion-icon>
+        Restablecer
       </ion-button>
     </div>
 
@@ -42,41 +53,61 @@
       </ion-card-header>
 
       <ion-card-content>
-        <ion-list lines="full">
-          @for (alerta of auraData.alertas(); track alerta.id) {
-            <ion-item class="alerta-item" [class.no-leida]="!alerta.leida">
-              <ion-icon
-                slot="start"
-                [name]="alerta.severidad === 'critica' ? 'alert-circle-outline' : 'warning-outline'"
-                [color]="alerta.severidad === 'critica' ? 'danger' : 'warning'">
-              </ion-icon>
+        @if (auraData.alertas().length === 0) {
+          <div class="empty-state">
+            <ion-icon name="shield-checkmark-outline" color="success"></ion-icon>
+            <h3>Sin alertas registradas</h3>
+            <p>El panel está limpio. Aquí aparecerán en vivo los eventos del paciente.</p>
+          </div>
+        } @else {
+          <ion-list lines="full">
+            @for (alerta of auraData.alertas(); track alerta.id) {
+              <ion-item class="alerta-item" [class.no-leida]="!alerta.leida">
+                <ion-icon
+                  slot="start"
+                  [name]="alerta.severidad === 'critica' ? 'alert-circle-outline' : 'warning-outline'"
+                  [color]="alerta.severidad === 'critica' ? 'danger' : 'warning'">
+                </ion-icon>
 
-              <ion-label class="ion-text-wrap">
-                <h2>
-                  <strong>{{ alerta.tipoAlerta }}</strong>
+                <ion-label class="ion-text-wrap">
+                  <h2>
+                    <strong>{{ alerta.tipoAlerta }}</strong>
+                    @if (!alerta.leida) {
+                      <span class="nuevo-dot">Nueva</span>
+                    }
+                  </h2>
+                  <p class="detalle-text">{{ alerta.detalle }}</p>
+                  <p class="meta-row">
+                    <ion-icon name="hardware-chip-outline"></ion-icon>
+                    {{ alerta.origen }}
+                  </p>
+                  <p class="meta-row">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    {{ alerta.fechaTexto }}
+                  </p>
+
                   @if (!alerta.leida) {
-                    <span class="nuevo-dot">Nueva</span>
+                    <ion-button
+                      size="small"
+                      fill="clear"
+                      color="primary"
+                      class="read-one-btn"
+                      (click)="marcarUnaLeida(alerta)">
+                      <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                      Alerta leída
+                    </ion-button>
                   }
-                </h2>
-                <p class="detalle-text">{{ alerta.detalle }}</p>
-                <p class="meta-row">
-                  <ion-icon name="hardware-chip-outline"></ion-icon>
-                  {{ alerta.origen }}
-                </p>
-                <p class="meta-row">
-                  <ion-icon name="calendar-outline"></ion-icon>
-                  {{ alerta.fechaTexto }}
-                </p>
-              </ion-label>
+                </ion-label>
 
-              <ion-badge
-                slot="end"
-                [color]="alerta.severidad === 'critica' ? 'danger' : 'warning'">
-                {{ alerta.severidad === 'critica' ? 'Alta' : 'Media' }}
-              </ion-badge>
-            </ion-item>
-          }
-        </ion-list>
+                <ion-badge
+                  slot="end"
+                  [color]="alerta.severidad === 'critica' ? 'danger' : 'warning'">
+                  {{ alerta.severidad === 'critica' ? 'Alta' : 'Media' }}
+                </ion-badge>
+              </ion-item>
+            }
+          </ion-list>
+        }
       </ion-card-content>
     </ion-card>
   </div>

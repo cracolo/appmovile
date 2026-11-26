@@ -12,6 +12,16 @@
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="mapa-container">
+    <div class="server-bar">
+      <ion-badge [color]="auraData.nubeConectada() ? 'success' : 'medium'">
+        <ion-icon
+          [name]="auraData.nubeConectada() ? 'cloud-done-outline' : 'cloud-offline-outline'"
+          class="badge-icon">
+        </ion-icon>
+        {{ auraData.nubeConectada() ? 'Conectado al servidor' : 'Sin conexión al servidor' }}
+      </ion-badge>
+    </div>
+
     <!-- Mapa interactivo Leaflet + OpenStreetMap -->
     <ion-card class="map-card">
       <div #mapContainer class="leaflet-map"></div>
@@ -19,47 +29,65 @@
 
     <!-- Información de la última posición -->
     <ion-card class="coords-card">
-      <ion-card-header>
-        <div class="card-header-row">
-          <div>
-            <ion-card-title>Última posición registrada</ion-card-title>
-            <ion-card-subtitle>{{ auraData.ubicacion().referencia }}</ion-card-subtitle>
+      @if (auraData.ubicacion(); as ub) {
+        <ion-card-header>
+          <div class="card-header-row">
+            <div>
+              <ion-card-title>Última posición registrada</ion-card-title>
+              <ion-card-subtitle>{{ ub.referencia }}</ion-card-subtitle>
+            </div>
+            <ion-badge [color]="auraData.estadoSensores().gpsActivo ? 'success' : 'secondary'">
+              {{ auraData.estadoSensores().gpsActivo ? 'GPS en vivo' : 'Última pos.' }}
+            </ion-badge>
           </div>
-          <ion-badge [color]="auraData.ubicacion().fuente === 'gps' ? 'success' : 'secondary'">
-            {{ auraData.ubicacion().fuente === 'gps' ? 'GPS Real' : (auraData.ubicacion().fuente === 'simulada' ? 'Simulada' : 'Demo') }}
-          </ion-badge>
-        </div>
-      </ion-card-header>
+        </ion-card-header>
 
-      <ion-card-content>
-        <div class="coords-info">
-          <p>
-            <ion-icon name="navigate-outline" color="primary"></ion-icon>
-            <strong>Coordenadas:</strong>
-            {{ auraData.ubicacion().lat.toFixed(5) }}, {{ auraData.ubicacion().lng.toFixed(5) }}
-          </p>
-          <p>
-            <ion-icon name="radio-outline" color="secondary"></ion-icon>
-            <strong>Precisión estimada:</strong> ±{{ auraData.ubicacion().precisionMetros }} m
-          </p>
-          <p>
-            <ion-icon name="time-outline" color="medium"></ion-icon>
-            <strong>Actualizado:</strong> {{ auraData.ubicacion().fechaTexto }}
-          </p>
-        </div>
+        <ion-card-content>
+          <div class="coords-info">
+            <p>
+              <ion-icon name="navigate-outline" color="primary"></ion-icon>
+              <strong>Coordenadas:</strong>
+              {{ ub.lat.toFixed(5) }}, {{ ub.lng.toFixed(5) }}
+            </p>
+            <p>
+              <ion-icon name="radio-outline" color="secondary"></ion-icon>
+              <strong>Precisión estimada:</strong> ±{{ ub.precisionMetros }} m
+            </p>
+            <p>
+              <ion-icon name="time-outline" color="medium"></ion-icon>
+              <strong>Actualizado:</strong> {{ ub.fechaTexto }}
+            </p>
+          </div>
 
-        <div class="map-actions">
-          <ion-button expand="block" color="primary" (click)="abrirEnGoogleMaps()">
-            <ion-icon slot="start" name="map-outline"></ion-icon>
-            Abrir en Google Maps
-          </ion-button>
+          <div class="map-actions">
+            <ion-button expand="block" color="primary" (click)="abrirEnGoogleMaps()">
+              <ion-icon slot="start" name="map-outline"></ion-icon>
+              Abrir en Google Maps
+            </ion-button>
 
-          <ion-button expand="block" fill="outline" color="secondary" (click)="centrarEnPaciente()">
-            <ion-icon slot="start" name="locate-outline"></ion-icon>
-            Centrar y actualizar
-          </ion-button>
-        </div>
-      </ion-card-content>
+            <ion-button expand="block" fill="outline" color="secondary" (click)="centrarEnPaciente()">
+              <ion-icon slot="start" name="locate-outline"></ion-icon>
+              Centrar en el paciente
+            </ion-button>
+          </div>
+        </ion-card-content>
+      } @else {
+        <ion-card-header>
+          <div class="card-header-row">
+            <div>
+              <ion-card-title>Esperando señal GPS</ion-card-title>
+              <ion-card-subtitle>El paciente aún no ha activado su ubicación</ion-card-subtitle>
+            </div>
+            <ion-badge color="medium">Sin señal</ion-badge>
+          </div>
+        </ion-card-header>
+
+        <ion-card-content>
+          <p class="waiting-text">
+            Apenas el paciente pulse <strong>Activar Ubicación</strong> en su teléfono, el marcador aparecerá aquí automáticamente en tiempo real.
+          </p>
+        </ion-card-content>
+      }
     </ion-card>
   </div>
 </ion-content>

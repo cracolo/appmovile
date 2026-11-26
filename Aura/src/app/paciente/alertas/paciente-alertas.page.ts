@@ -22,12 +22,12 @@ import {
 import { addIcons } from 'ionicons';
 import {
   logOutOutline,
-  checkmarkDoneOutline,
-  refreshOutline,
   alertCircleOutline,
   warningOutline,
-  hardwareChipOutline,
   calendarOutline,
+  cloudDoneOutline,
+  cloudOfflineOutline,
+  shieldCheckmarkOutline,
 } from 'ionicons/icons';
 import { AuthService } from '../../services/auth';
 import { AuraDataService } from '../../services/aura-data.service';
@@ -67,25 +67,17 @@ export class PacienteAlertasPage {
   ) {
     addIcons({
       logOutOutline,
-      checkmarkDoneOutline,
-      refreshOutline,
       alertCircleOutline,
       warningOutline,
-      hardwareChipOutline,
       calendarOutline,
+      cloudDoneOutline,
+      cloudOfflineOutline,
+      shieldCheckmarkOutline,
     });
   }
 
   ionViewWillEnter() {
     void this.auraData.cargarDatosPersistidos();
-  }
-
-  async marcarLeidas() {
-    await this.auraData.marcarTodasLeidas();
-  }
-
-  async restablecerDemo() {
-    await this.auraData.restablecerAlertasDemo();
   }
 
   async cerrarSesion() {
